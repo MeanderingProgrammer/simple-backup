@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "simple_backup"
+name = "simple-backup"
 version = "0.1.0"
