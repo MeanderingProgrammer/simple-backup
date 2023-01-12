@@ -6,6 +6,8 @@ This is so we can later compare it to future scans to determine when something c
 
 This will then allow us to find `new`, `modified`, & `deleted` files and take appropriate actions.
 
+* Created `system_state.rs`, stores names and modification times, stored in local file
+
 ## 2) Create a framework for handling changes
 
 Immediately there are 2 things we would like to be able to do when files change.
@@ -25,6 +27,8 @@ Will likely consist of:
 Along with some either metadata, perhaps a sync schedule and credentials.
 
 We'll need to store this information across executions, likely a similar mechanism to directory state.
+
+* Created `user_profiles.rs`, stores list of directories, stored in local file
 
 ## 4) Create a simple UI
 
