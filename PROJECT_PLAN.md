@@ -38,6 +38,8 @@ Want some simple UI to be able to add directories to be tracked, and any other c
 
 * Example Application: https://github.com/DioxusLabs/example-projects/blob/master/file-explorer/src/main.rs
 
+Syle uses [bulma.io](https://bulma.io/documentation/).
+
 ## 5) Restore Framework
 
 If an existing User wants to restore state and has all the needed devices, i.e. AWS credentials / external hard drive,
