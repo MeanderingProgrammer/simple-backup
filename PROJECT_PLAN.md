@@ -34,6 +34,10 @@ We'll need to store this information across executions, likely a similar mechani
 
 Want some simple UI to be able to add directories to be tracked, and any other configurations.
 
+[dioxus](https://dioxuslabs.com/guide/) will be the basis of the UI.
+
+* Example Application: https://github.com/DioxusLabs/example-projects/blob/master/file-explorer/src/main.rs
+
 ## 5) Restore Framework
 
 If an existing User wants to restore state and has all the needed devices, i.e. AWS credentials / external hard drive,

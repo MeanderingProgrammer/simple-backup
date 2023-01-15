@@ -7,9 +7,50 @@ use self::system_state::{
     SystemState,
 };
 
+use dioxus::prelude::*;
 use glob::glob;
+use native_dialog::FileDialog;
 
 fn main() {
+    dioxus_desktop::launch(app);
+}
+
+fn app(cx: Scope) -> Element {
+    let profile = get_profile();
+
+    cx.render(rsx!(
+        link {
+            rel: "stylesheet",
+            href: "https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css",
+        },
+        main {
+            profile.iter().map(|directory| {
+                rsx!(
+                    div {
+                        class: "title",
+                        "{directory}",
+                    }
+                )
+            }),
+            rsx!(
+                button {
+                    class: "button",
+                    onclick: |_| select_file(),
+                    "Add",
+                }
+            ),
+        },
+    ))
+}
+
+fn select_file() {
+    let path = FileDialog::new()
+        .show_open_single_dir()
+        .unwrap().unwrap();
+    dbg!(path);
+}
+
+fn run_process() {
     let profile = get_profile();
 
     let previous_state = SystemState::read();
