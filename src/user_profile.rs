@@ -15,7 +15,7 @@ impl UserProfile {
         self.directories.push(directory.to_string());
     }
 
-    pub fn iter(&self) -> impl Iterator<Item=&String> + '_ {
+    pub fn iter(&self) -> impl Iterator<Item=&String> {
         self.directories.iter()
     }
 

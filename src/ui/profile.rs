@@ -6,25 +6,15 @@ use native_dialog::FileDialog;
 pub fn app(cx: Scope) -> Element {
     cx.render(rsx!(
         main {
-            api::profile::get().iter().map(|directory| {
-                rsx!(
-                    div {
-                        class: "title",
-                        "{directory}",
-                    }
-                )
-            }),
+            api::profile::get().iter().map(|directory| rsx!(
+                div {
+                    class: "box",
+                    p { strong { "Directory: " } "{directory}" }
+                }
+            )),
             rsx!(
-                button {
-                    class: "button",
-                    onclick: |_| add_directory(),
-                    "Add",
-                },
-                button {
-                    class: "button",
-                    onclick: |_| sync_state(),
-                    "Sync",
-                },
+                button { class: "button", onclick: |_| add_directory(), "Add" },
+                button { class: "button", onclick: |_| sync_state(), "Sync" },
             ),
         },
     ))

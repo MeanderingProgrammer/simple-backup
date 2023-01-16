@@ -1,4 +1,5 @@
 use bincode;
+use chrono::{DateTime, TimeZone, Utc};
 use serde::{Serialize, Deserialize};
 use std::collections::HashSet;
 use std::fs;
@@ -28,6 +29,10 @@ impl SystemState {
         self.file_states.difference(&rhs.file_states)
     }
 
+    pub fn iter(&self) -> impl Iterator<Item=&FileState> {
+        self.file_states.iter()
+    }
+
     pub fn read() -> Self {
         match fs::File::open(FILE) {
             Ok(mut file) => {
@@ -48,8 +53,8 @@ impl SystemState {
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Hash, Clone)]
 pub struct FileState {
-    path: String,
-    last_modified: u64,
+    pub path: String,
+    pub last_modified: u64,
 }
 
 impl FileState {
@@ -61,5 +66,10 @@ impl FileState {
                 .duration_since(SystemTime::UNIX_EPOCH).unwrap()
                 .as_secs(),
         }
+    }
+
+    pub fn to_date(&self) -> DateTime<Utc> {
+        let time_in_seconds = self.last_modified.try_into().unwrap();
+        Utc.timestamp_opt(time_in_seconds, 0).single().unwrap()
     }
 }
