@@ -1,8 +1,8 @@
+use crate::api::profile;
 use crate::system_state::{
     FileState,
     SystemState,
 };
-use crate::user_profile::UserProfile;
 
 use glob::glob;
 
@@ -10,7 +10,8 @@ pub fn previous() -> SystemState {
     SystemState::read()
 }
 
-pub fn current(profile: &UserProfile) -> SystemState {
+pub fn current() -> SystemState {
+    let profile = profile::get();
     let mut state = SystemState::new();
     profile.iter()
         .for_each(|directory| add_file_states(&mut state, &directory));
