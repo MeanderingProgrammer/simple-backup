@@ -5,7 +5,8 @@ pub fn get() -> UserProfile {
 }
 
 pub fn add_directory(directory: &str) {
-    let mut profile = get();
-    profile.add(directory);
-    profile.save();
+    //let mut profile = get();
+    //profile.add(directory);
+    //profile.save();
+    println!("{}", directory);
 }

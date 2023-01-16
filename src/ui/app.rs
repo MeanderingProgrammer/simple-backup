@@ -16,6 +16,7 @@ struct Page<'a> {
 pub fn entry_point(cx: Scope) -> Element {
     let pages = vec![
         Page { name: "Home", route: "/", child: |cx| ui::profile::app(cx) },
+        Page { name: "Add", route: "/add", child: |cx| ui::add::app(cx) },
         Page { name: "State", route: "/state", child: |cx| ui::state::app(cx) },
     ];
 

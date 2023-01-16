@@ -13,9 +13,7 @@ cargo run -r
 ### Cleanup State
 
 ```
-rm data/profile.bin
-
-rm data/state.bin
+rm data/*.bin
 ```
 
 ## Some Useful Resources

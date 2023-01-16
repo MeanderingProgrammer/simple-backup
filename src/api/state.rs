@@ -14,7 +14,7 @@ pub fn current() -> SystemState {
     let profile = profile::get();
     let mut state = SystemState::new();
     profile.iter()
-        .for_each(|directory| add_file_states(&mut state, &directory));
+        .for_each(|directory| add_file_states(&mut state, &directory.local_path));
     state
 }
 
