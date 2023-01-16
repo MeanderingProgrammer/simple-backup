@@ -4,10 +4,12 @@ use chrono::{DateTime, Utc};
 use dioxus::prelude::*;
 
 pub fn app(cx: Scope) -> Element {
+    println!("2");
+
     cx.render(rsx!(
         main {
             rsx!(
-                button { class: "button", onclick: |_| sync_state(), "Sync" },
+                button { class: "button", onclick: |_| sync_state(cx), "Sync" },
             ),
             api::state::previous().iter().map(|file| rsx!(
                 div {
@@ -24,7 +26,7 @@ fn format_date(date_time: DateTime<Utc>) -> String {
     date_time.format("%Y-%m-%d %H:%M").to_string()
 }
 
-fn sync_state() {
+fn sync_state(cx: Scope) {
     let previous_state = api::state::previous();
     let current_state = api::state::current();
 
@@ -32,4 +34,7 @@ fn sync_state() {
 
     let difference = previous_state.difference(&current_state);
     dbg!(difference);
+
+    // Trigger reload on change
+    cx.needs_update();
 }
