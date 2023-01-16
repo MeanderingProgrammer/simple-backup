@@ -1,4 +1,4 @@
-use crate::user_profile::UserProfile;
+use crate::db::profile::UserProfile;
 
 pub fn get() -> UserProfile {
     UserProfile::read()
