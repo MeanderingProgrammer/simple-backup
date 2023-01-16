@@ -1,9 +1,9 @@
-use bincode;
+use crate::db::util;
+
 use chrono::{DateTime, TimeZone, Utc};
 use serde::{Serialize, Deserialize};
 use std::collections::HashSet;
 use std::fs;
-use std::io::prelude::*;
 use std::path::PathBuf;
 use std::time::SystemTime;
 
@@ -78,20 +78,11 @@ impl SystemState {
     }
 
     pub fn read() -> Self {
-        match fs::File::open(FILE) {
-            Ok(mut file) => {
-                let mut buffer = Vec::<u8>::new();
-                file.read_to_end(&mut buffer).unwrap();
-                bincode::deserialize(&buffer).unwrap()
-            },
-            Err(_) => Self::new(),
-        }
+        util::read(FILE, Self::new())
     }
 
     pub fn save(&self) {
-        let encoded = bincode::serialize(self).unwrap();
-        let mut file = fs::File::create(FILE).unwrap();
-        file.write_all(&encoded).unwrap();
+        util::save(FILE, self);
     }
 }
 

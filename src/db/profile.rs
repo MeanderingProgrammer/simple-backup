@@ -1,7 +1,6 @@
-use bincode;
+use crate::db::util;
+
 use serde::{Serialize, Deserialize};
-use std::fs;
-use std::io::prelude::*;
 
 const FILE: &str = "data/profile.bin";
 
@@ -20,21 +19,12 @@ impl UserProfile {
     }
 
     pub fn read() -> Self {
-        match fs::File::open(FILE) {
-            Ok(mut file) => {
-                let mut buffer = Vec::<u8>::new();
-                file.read_to_end(&mut buffer).unwrap();
-                bincode::deserialize(&buffer).unwrap()
-            },
-            Err(_) => Self {
-                directories: vec![],
-            },
-        }
+        util::read(FILE, Self {
+            directories: vec![],
+        })
     }
 
     pub fn save(&self) {
-        let encoded = bincode::serialize(self).unwrap();
-        let mut file = fs::File::create(FILE).unwrap();
-        file.write_all(&encoded).unwrap();
+        util::save(FILE, self);
     }
 }
