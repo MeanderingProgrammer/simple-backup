@@ -1,15 +1,10 @@
 use crate::api;
 
 use dioxus::prelude::*;
-use dioxus_router::Link;
 use native_dialog::FileDialog;
 
 pub fn app(cx: Scope) -> Element {
     cx.render(rsx!(
-        link {
-            rel: "stylesheet",
-            href: "https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css",
-        },
         main {
             api::profile::get().iter().map(|directory| {
                 rsx!(
@@ -29,10 +24,6 @@ pub fn app(cx: Scope) -> Element {
                     class: "button",
                     onclick: |_| sync_state(),
                     "Sync",
-                },
-                Link {
-                    to: "/state",
-                    "State",
                 },
             ),
         },
