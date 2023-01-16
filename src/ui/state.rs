@@ -6,6 +6,9 @@ use dioxus::prelude::*;
 pub fn app(cx: Scope) -> Element {
     cx.render(rsx!(
         main {
+            rsx!(
+                button { class: "button", onclick: |_| sync_state(), "Sync" },
+            ),
             api::state::previous().iter().map(|file| rsx!(
                 div {
                     class: "box",
@@ -19,4 +22,14 @@ pub fn app(cx: Scope) -> Element {
 
 fn format_date(date_time: DateTime<Utc>) -> String {
     date_time.format("%Y-%m-%d %H:%M").to_string()
+}
+
+fn sync_state() {
+    let previous_state = api::state::previous();
+    let current_state = api::state::current();
+
+    dbg!(previous_state == current_state);
+
+    let difference = previous_state.difference(&current_state);
+    dbg!(difference);
 }

@@ -25,8 +25,52 @@ impl SystemState {
         self.file_states.insert(file_state);
     }
 
-    pub fn difference<'a>(&'a self, rhs: &'a Self) -> impl Iterator<Item=&FileState> {
-        self.file_states.difference(&rhs.file_states)
+    pub fn difference<'a>(&'a self, rhs: &'a Self) -> StateDifference {
+        let unchanged: HashSet<FileState> = self.file_states.intersection(&rhs.file_states)
+            .map(|state| state.clone())
+            .collect();
+
+        let current_paths = self.paths();
+        let added: HashSet<FileState> = rhs.iter()
+            .filter(|state| !current_paths.contains(&state.path))
+            .map(|state| state.clone())
+            .collect();
+
+        let new_paths = rhs.paths();
+        let deleted: HashSet<FileState> = self.iter()
+            .filter(|state| !new_paths.contains(&state.path))
+            .map(|state| state.clone())
+            .collect();
+
+        let modified = current_paths.intersection(&new_paths)
+            .map(|path| (self.get(path), rhs.get(path)))
+            .filter(|(previous, current)| {
+                if previous.last_modified != current.last_modified {
+                    assert!(previous.last_modified < current.last_modified, "Only newer files are expected");
+                    true
+                } else {
+                    false
+                }
+            })
+            .map(|(_, current)| current)
+            .collect();
+
+        StateDifference {
+            unchanged,
+            added,
+            deleted,
+            modified,
+        }
+    }
+
+    pub fn get(&self, path: &str) -> FileState {
+        self.iter().find(|state| state.path == path).unwrap().clone()
+    }
+
+    pub fn paths(&self) -> HashSet<String> {
+        self.iter()
+            .map(|state| state.path.clone())
+            .collect()
     }
 
     pub fn iter(&self) -> impl Iterator<Item=&FileState> {
@@ -49,6 +93,14 @@ impl SystemState {
         let mut file = fs::File::create(FILE).unwrap();
         file.write_all(&encoded).unwrap();
     }
+}
+
+#[derive(Debug)]
+pub struct StateDifference {
+    pub unchanged: HashSet<FileState>,
+    pub added: HashSet<FileState>,
+    pub deleted: HashSet<FileState>,
+    pub modified: HashSet<FileState>,
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Hash, Clone)]
