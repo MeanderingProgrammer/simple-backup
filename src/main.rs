@@ -14,7 +14,7 @@ use dioxus_router::{
 struct Page<'a> {
     name: &'a str,
     route: &'a str,
-    child: Element<'a>,
+    child: fn(Scope) -> Element,
 }
 
 fn main() {
@@ -30,8 +30,8 @@ fn main() {
 
 fn app(cx: Scope) -> Element {
     let pages = vec![
-        Page { name: "Home", route: "/", child: ui::profile::app(cx) },
-        Page { name: "State", route: "/state", child: ui::state::app(cx) },
+        Page { name: "Home", route: "/", child: |cx| ui::profile::app(cx) },
+        Page { name: "State", route: "/state", child: |cx| ui::state::app(cx) },
     ];
 
     cx.render(rsx!(
@@ -53,7 +53,7 @@ fn app(cx: Scope) -> Element {
 
             // The actual route definitions
             pages.iter().map(|page| rsx!(
-                Route { to: page.route, &page.child }
+                Route { to: page.route, (page.child)(cx) }
             )),
         },
     ))
