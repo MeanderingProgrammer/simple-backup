@@ -6,119 +6,102 @@ use crate::db::profile::{
 
 use dioxus::prelude::*;
 use native_dialog::FileDialog;
-use std::borrow::Borrow;
 
-#[derive(Props, PartialEq)]
-struct SelectFolderProps {
-    directory_type: String,
-    path: UseState<String>,
-}
-
+#[inline_props]
 #[allow(non_snake_case)]
-fn SelectFolder(cx: Scope<SelectFolderProps>) -> Element {
-    println!("2.1");
-
+fn SelectFolder<'a>(cx: Scope<'a>, directory_type: String, on_select: EventHandler<'a, String>) -> Element {
+    let folder = use_state(&cx, String::default);
     cx.render(rsx!(
         div {
             class: "file has-name is-fullwidth",
             span {
                 class: "file-cta",
-                onclick: |_| {
+                onclick: move |_| {
                     let directory = select_directory().unwrap_or_default();
-                    cx.props.path.set(directory);
+                    folder.set(directory.clone());
+                    on_select.call(directory.clone());
                 },
                 span { class: "file-icon", i { class: "fas fa-upload" } }
-                span { class: "file-label", "Choose {cx.props.directory_type} directory…" }
+                span { class: "file-label", "Choose {directory_type} directory…" }
             }
-            span { class: "file-name", "{cx.props.path}" }
+            span { class: "file-name", "{folder}" }
         }
     ))
 }
 
-#[derive(Props, PartialEq)]
-struct ConfigProps {
-    backup_config: UseState<BackupConfig>,
+#[inline_props]
+#[allow(non_snake_case)]
+fn SimpleInput<'a>(cx: Scope<'a>, helper_text: String, on_input: EventHandler<'a, String>) -> Element {
+    let property = use_state(&cx, String::default);
+    cx.render(rsx!(
+        input {
+            class: "input is-primary is-fullwidth",
+            placeholder: "{helper_text}",
+            value: "{property}",
+            oninput: move |event| {
+                let value = event.value.to_string();
+                property.set(value.clone());
+                on_input.call(value.clone());
+            },
+        }
+    ))
 }
 
+#[inline_props]
 #[allow(non_snake_case)]
-fn LocalConfig(cx: Scope<ConfigProps>) -> Element {
-    println!("2.2");
-
-    let path = use_state(cx, String::default);
-    println!("{:?}", path);
-
-    //cx.props.backup_config.set(BackupConfig::Local(LocalConfig {
-    //    path: path.to_string(),
-    //}));
-
+fn LocalConfig(cx: Scope, backup_config: UseState<BackupConfig>) -> Element {
     cx.render(rsx!(
         SelectFolder {
             directory_type: "backup".to_string(),
-            path: path.clone(),
+            on_select: move |path| backup_config.set(BackupConfig::Local(LocalConfig {
+                path: path
+            })),
         }
     ))
 }
 
+#[inline_props]
 #[allow(non_snake_case)]
-fn AwsS3Config(cx: Scope<ConfigProps>) -> Element {
-    println!("2.3");
+fn AwsS3Config(cx: Scope, backup_config: UseState<BackupConfig>) -> Element {
+    let bucket = use_state(&cx, String::default);
+    let key = use_state(&cx, String::default);
 
-    let bucket = use_state(cx, String::default);
-    let key = use_state(cx, String::default);
-    println!("{:?} -- {:?}", bucket, key);
-
-    //cx.props.backup_config.set(BackupConfig::Local(LocalConfig {
-    //    path: path.to_string(),
-    //}));
+    let new_config = BackupConfig::AwsS3(AwsS3Config {
+        bucket: bucket.to_string(),
+        key: key.to_string(),
+    });
+    if &new_config != backup_config.get() {
+        backup_config.set(new_config);
+    }
 
     cx.render(rsx!(
-        input {
-            class: "input is-primary is-fullwidth",
-            placeholder: "S3 Bucket",
-            oninput: |event| {
-                bucket.set(event.value.to_string());
-                cx.props.backup_config.set(BackupConfig::AwsS3(AwsS3Config {
-                    bucket: bucket.to_string(),
-                    key: key.to_string(),
-                }));
-            },
+        SimpleInput {
+            helper_text: "S3 Bucket".to_string(),
+            on_input: move |input| bucket.set(input),
         }
-        input {
-            class: "input is-primary is-fullwidth",
-            placeholder: "S3 Key",
-            oninput: |event| {
-                key.set(event.value.to_string());
-                cx.props.backup_config.set(BackupConfig::AwsS3(AwsS3Config {
-                    bucket: bucket.to_string(),
-                    key: key.to_string(),
-                }));
-            },
+        SimpleInput {
+            helper_text: "S3 Key".to_string(),
+            on_input: move |input| key.set(input),
         }
     ))
 }
 
 pub fn app(cx: Scope) -> Element {
-    println!("2");
-
-    let local_path = use_state(cx, String::default);
-    println!("{:?}", local_path);
-
-    let backup_config = use_state(cx, BackupConfig::default);
-    println!("{:?}", backup_config);
-
+    let local_path = use_state(&cx, String::default);
+    let backup_config = use_state(&cx, BackupConfig::default);
     cx.render(rsx!(
         main {
-            p { strong { "Fill in Details" } }
-
+            h4 { class: "title is-4", "Tracking Settings" }
             SelectFolder {
                 directory_type: "input".to_string(),
-                path: local_path.clone(),
+                on_select: |path| local_path.set(path),
             }
 
+            h4 { class: "title is-4", "Backup Settings" }
             div {
                 class: "select is-primary is-fullwidth",
                 select {
-                    onchange: |event| {
+                    onchange: move |event| {
                         let updated_backup_config = match event.value.as_str() {
                             "Local" => BackupConfig::Local(LocalConfig::default()),
                             "AWS" => BackupConfig::AwsS3(AwsS3Config::default()),
@@ -130,9 +113,8 @@ pub fn app(cx: Scope) -> Element {
                     option { "AWS" }
                 }
             }
-
-            match backup_config.current().borrow() {
-                BackupConfig::Local(_) => rsx! (
+            match backup_config.get() {
+                BackupConfig::Local(_) => rsx!(
                     LocalConfig {
                         backup_config: backup_config.clone(),
                     }
@@ -146,7 +128,7 @@ pub fn app(cx: Scope) -> Element {
 
             button {
                 class: "button is-primary is-fullwidth",
-                onclick: |_| submit(local_path, backup_config),
+                onclick: move |_| submit(local_path, backup_config),
                 "Submit"
             }
         }

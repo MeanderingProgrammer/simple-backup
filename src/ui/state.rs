@@ -4,8 +4,6 @@ use chrono::{DateTime, Utc};
 use dioxus::prelude::*;
 
 pub fn app(cx: Scope) -> Element {
-    println!("3");
-
     cx.render(rsx!(
         main {
             rsx!(

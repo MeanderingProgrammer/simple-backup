@@ -6,6 +6,10 @@
     margin-top: 10px;
 }
 
+.file {
+    margin-bottom: 20px;
+}
+
 .is-active {
     background-color: lightblue !important;
 }
