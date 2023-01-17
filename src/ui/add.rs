@@ -15,8 +15,7 @@ use native_dialog::{
 };
 
 #[inline_props]
-#[allow(non_snake_case)]
-fn SelectFolder<'a>(cx: Scope<'a>, directory_type: String, on_select: EventHandler<'a, String>) -> Element {
+fn select_folder<'a>(cx: Scope<'a>, directory_type: String, on_select: EventHandler<'a, String>) -> Element {
     let folder = use_state(&cx, String::default);
     cx.render(rsx!(
         div {
@@ -37,8 +36,7 @@ fn SelectFolder<'a>(cx: Scope<'a>, directory_type: String, on_select: EventHandl
 }
 
 #[inline_props]
-#[allow(non_snake_case)]
-fn SimpleInput<'a>(cx: Scope<'a>, helper_text: String, on_input: EventHandler<'a, String>) -> Element {
+fn simple_input<'a>(cx: Scope<'a>, helper_text: String, on_input: EventHandler<'a, String>) -> Element {
     let property = use_state(&cx, String::default);
     cx.render(rsx!(
         input {
@@ -55,10 +53,9 @@ fn SimpleInput<'a>(cx: Scope<'a>, helper_text: String, on_input: EventHandler<'a
 }
 
 #[inline_props]
-#[allow(non_snake_case)]
-fn LocalConfig(cx: Scope, backup_config: UseState<BackupConfig>) -> Element {
+fn local_config(cx: Scope, backup_config: UseState<BackupConfig>) -> Element {
     cx.render(rsx!(
-        SelectFolder {
+        select_folder {
             directory_type: "backup".to_string(),
             on_select: move |path| backup_config.set(BackupConfig::Local(LocalConfig {
                 path: path
@@ -68,8 +65,7 @@ fn LocalConfig(cx: Scope, backup_config: UseState<BackupConfig>) -> Element {
 }
 
 #[inline_props]
-#[allow(non_snake_case)]
-fn AwsS3Config(cx: Scope, backup_config: UseState<BackupConfig>) -> Element {
+fn aws_s3_config(cx: Scope, backup_config: UseState<BackupConfig>) -> Element {
     let bucket = use_state(&cx, String::default);
     let key = use_state(&cx, String::default);
 
@@ -82,11 +78,11 @@ fn AwsS3Config(cx: Scope, backup_config: UseState<BackupConfig>) -> Element {
     }
 
     cx.render(rsx!(
-        SimpleInput {
+        simple_input {
             helper_text: "S3 Bucket".to_string(),
             on_input: move |input| bucket.set(input),
         }
-        SimpleInput {
+        simple_input {
             helper_text: "S3 Key".to_string(),
             on_input: move |input| key.set(input),
         }
@@ -99,7 +95,7 @@ pub fn app(cx: Scope) -> Element {
     cx.render(rsx!(
         main {
             h4 { class: "title is-4", "Tracking Settings" }
-            SelectFolder {
+            select_folder {
                 directory_type: "input".to_string(),
                 on_select: |path| local_path.set(path),
             }
@@ -122,12 +118,12 @@ pub fn app(cx: Scope) -> Element {
             }
             match backup_config.get() {
                 BackupConfig::Local(_) => rsx!(
-                    LocalConfig {
+                    local_config {
                         backup_config: backup_config.clone(),
                     }
                 ),
                 BackupConfig::AwsS3(_) => rsx!(
-                    AwsS3Config {
+                    aws_s3_config {
                         backup_config: backup_config.clone(),
                     }
                 ),
