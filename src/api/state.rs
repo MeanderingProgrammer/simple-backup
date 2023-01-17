@@ -13,8 +13,9 @@ pub fn previous() -> SystemState {
 pub fn current() -> SystemState {
     let profile = profile::get();
     let mut state = SystemState::new();
-    profile.iter()
-        .for_each(|directory| add_file_states(&mut state, &directory.local_path));
+    profile.iter().for_each(|directory| {
+        add_file_states(&mut state, &directory.local_path);
+    });
     state
 }
 
@@ -23,5 +24,5 @@ fn add_file_states(state: &mut SystemState, root: &str) {
     glob(&glob_pattern).unwrap()
         .map(|path| path.unwrap())
         .filter(|path| path.is_file())
-        .for_each(|path| state.add(FileState::new(path)));
+        .for_each(|path| state.add(FileState::new(path, root)));
 }

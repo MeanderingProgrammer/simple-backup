@@ -1,6 +1,11 @@
-use crate::db::util;
+use crate::db::{
+    state::FileState,
+    util,
+};
 
 use serde::{Serialize, Deserialize};
+use std::fs;
+use std::path::Path;
 
 const FILE: &str = "data/profile.bin";
 
@@ -12,6 +17,10 @@ pub struct UserProfile {
 impl UserProfile {
     pub fn add(&mut self, directory: DirectoryConfig) {
         self.directories.push(directory);
+    }
+
+    pub fn get(&self, path: &str) -> &DirectoryConfig {
+        self.iter().find(|directory| directory.local_path == path).unwrap()
     }
 
     pub fn iter(&self) -> impl Iterator<Item=&DirectoryConfig> {
@@ -54,6 +63,13 @@ impl BackupConfig {
             Self::AwsS3(config) => config.validate(),
         }
     }
+
+    pub fn copy_file(&self, file: &FileState) {
+        match self {
+            Self::Local(config) => config.copy_file(file),
+            Self::AwsS3(config) => config.copy_file(file),
+        };
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -74,6 +90,33 @@ impl LocalConfig {
             errors.push("No backup directory provided for local configuration");
         }
         errors
+    }
+
+    pub fn copy_file(&self, file: &FileState) {
+        dbg!(self);
+        dbg!(file);
+
+        let from_location = Path::new(&file.path);
+
+        let to_path = format!("{}{}", &self.path, &file.suffix);
+        let to_location = Path::new(&to_path);
+
+        // Create the file if it does not already exist, before starting the copy
+        if !to_location.exists() {
+            fs::OpenOptions::new()
+                .write(true)
+                .create(true)
+                .open(to_location)
+                .unwrap();
+        }
+
+        dbg!(from_location);
+        dbg!(to_location.exists());
+
+        dbg!(from_location.parent());
+        dbg!(to_location.parent());
+        //let result = fs::copy(from_location, to_location);
+        //dbg!(result);
     }
 }
 
@@ -99,5 +142,10 @@ impl AwsS3Config {
             errors.push("No key provided for aws configuration");
         }
         errors
+    }
+
+    pub fn copy_file(&self, file: &FileState) {
+        dbg!(file);
+        println!("TODO");
     }
 }

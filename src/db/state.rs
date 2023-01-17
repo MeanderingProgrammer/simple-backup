@@ -97,13 +97,19 @@ pub struct StateDifference {
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Hash, Clone)]
 pub struct FileState {
     pub path: String,
+    pub root: String,
+    pub suffix: String,
     pub last_modified: u64,
 }
 
 impl FileState {
-    pub fn new(path: PathBuf) -> Self {
+    pub fn new(path: PathBuf, root: &str) -> Self {
+        let path_str = path.as_path().to_str().unwrap().to_string();
+        let suffix = path_str.strip_prefix(root).unwrap();
         Self {
-            path: path.as_path().to_str().unwrap().to_string(),
+            path: path_str.clone(),
+            root: root.to_string(),
+            suffix: suffix.to_string(),
             last_modified: fs::metadata(path).unwrap()
                 .modified().unwrap()
                 .duration_since(SystemTime::UNIX_EPOCH).unwrap()

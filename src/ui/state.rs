@@ -11,7 +11,7 @@ pub fn app(cx: Scope) -> Element {
             ),
             api::state::previous().iter().map(|file| rsx!(
                 div {
-                    class: "box",
+                    class: "box content",
                     p { strong { "File Path: " } "{file.path}" }
                     p { strong { "Last Updated: " } "{format_date(file.to_date())}" }
                 }
@@ -31,8 +31,18 @@ fn sync_state(cx: Scope) {
     dbg!(previous_state == current_state);
 
     let difference = previous_state.difference(&current_state);
-    dbg!(difference);
+    dbg!(&difference);
+
+    let profile = api::profile::get();
+
+    dbg!("GETTING STARTED");
+    for added_file in &difference.added {
+        let config = profile.get(&added_file.root);
+        config.backup_config.copy_file(added_file);
+
+        break;
+    }
 
     // Trigger reload on change
-    cx.needs_update();
+    //cx.needs_update();
 }
