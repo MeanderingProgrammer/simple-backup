@@ -35,7 +35,7 @@ pub struct DirectoryConfig {
     pub backup_config: BackupConfig,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub enum BackupConfig {
     Local(LocalConfig),
     AwsS3(AwsS3Config),
@@ -47,7 +47,16 @@ impl Default for BackupConfig {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+impl BackupConfig {
+    pub fn validate(&self) -> Vec<&str> {
+        match self {
+            Self::Local(config) => config.validate(),
+            Self::AwsS3(config) => config.validate(),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct LocalConfig {
     pub path: String,
 }
@@ -58,7 +67,17 @@ impl Default for LocalConfig {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+impl LocalConfig {
+    pub fn validate(&self) -> Vec<&str> {
+        let mut errors = Vec::new();
+        if self.path.is_empty() {
+            errors.push("No backup directory provided for local configuration");
+        }
+        errors
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct AwsS3Config {
     pub bucket: String,
     pub key: String,
@@ -67,5 +86,18 @@ pub struct AwsS3Config {
 impl Default for AwsS3Config {
     fn default() -> Self {
         Self { bucket: String::default(), key: String::default() }
+    }
+}
+
+impl AwsS3Config {
+    pub fn validate(&self) -> Vec<&str> {
+        let mut errors = Vec::new();
+        if self.bucket.is_empty() {
+            errors.push("No bucket provided for aws configuration");
+        }
+        if self.key.is_empty() {
+            errors.push("No key provided for aws configuration");
+        }
+        errors
     }
 }

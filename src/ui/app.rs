@@ -7,19 +7,7 @@ use dioxus_router::{
     Router,
 };
 
-struct Page<'a> {
-    name: &'a str,
-    route: &'a str,
-    child: fn(Scope) -> Element,
-}
-
 pub fn entry_point(cx: Scope) -> Element {
-    let pages = vec![
-        Page { name: "Home", route: "/", child: |cx| ui::profile::app(cx) },
-        Page { name: "Add", route: "/add", child: |cx| ui::add::app(cx) },
-        Page { name: "State", route: "/state", child: |cx| ui::state::app(cx) },
-    ];
-
     cx.render(rsx!(
         // Make bulma.io style available on all pages
         link {
@@ -32,15 +20,14 @@ pub fn entry_point(cx: Scope) -> Element {
             // Navigation bar for router
             nav {
                 class: "navbar",
-                pages.iter().map(|page| rsx!(
-                    Link { class: "navbar-item", active_class: "is-active", to: page.route, page.name }
-                )),
+                Link { class: "navbar-item", active_class: "is-active", to: "/", "Home" }
+                Link { class: "navbar-item", active_class: "is-active", to: "/add", "Add" }
+                Link { class: "navbar-item", active_class: "is-active", to: "/state", "State" }
             },
-
             // The actual route definitions
-            pages.iter().map(|page| rsx!(
-                Route { to: page.route, (page.child)(cx) }
-            )),
+            Route { to: "/", ui::profile::app {} }
+            Route { to: "/add", ui::add::app {} }
+            Route { to: "/state", ui::state::app {} }
         },
     ))
 }

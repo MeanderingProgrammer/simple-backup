@@ -1,11 +1,18 @@
+use crate::api::profile;
 use crate::db::profile::{
     AwsS3Config,
     BackupConfig,
+    DirectoryConfig,
     LocalConfig,
 };
 
 use dioxus::prelude::*;
-use native_dialog::FileDialog;
+use dioxus_router::use_router;
+use native_dialog::{
+    FileDialog,
+    MessageDialog,
+    MessageType,
+};
 
 #[inline_props]
 #[allow(non_snake_case)]
@@ -128,7 +135,7 @@ pub fn app(cx: Scope) -> Element {
 
             button {
                 class: "button is-primary is-fullwidth",
-                onclick: move |_| submit(local_path, backup_config),
+                onclick: move |_| submit(cx, local_path.get(), backup_config.get()),
                 "Submit"
             }
         }
@@ -148,7 +155,26 @@ fn select_directory() -> Option<String> {
     }
 }
 
-fn submit(local_path: &UseState<String>, backup_config: &UseState<BackupConfig>) {
-    println!("{:?}", local_path);
-    println!("{:?}", backup_config);
+fn submit(cx: Scope, local_path: &String, backup_config: &BackupConfig) {
+    let mut errors = Vec::new();
+    if local_path.is_empty() {
+        errors.push("No tracking directory provided");
+    }
+    backup_config.validate().iter()
+        .for_each(|error| errors.push(error));
+
+    if !errors.is_empty() {
+        MessageDialog::new()
+            .set_type(MessageType::Error)
+            .set_title("Invalid input provided")
+            .set_text(&format!("{:#?}", errors))
+            .show_alert()
+            .unwrap();
+    } else {
+        profile::add_directory(DirectoryConfig {
+            local_path: local_path.to_string(),
+            backup_config: backup_config.clone(),
+        });
+        use_router(cx).navigate_to("/");
+    }
 }
