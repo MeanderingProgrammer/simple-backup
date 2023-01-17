@@ -1,4 +1,5 @@
 use crate::api;
+use crate::db::profile::BackupConfig;
 
 use dioxus::prelude::*;
 
@@ -7,8 +8,19 @@ pub fn app(cx: Scope) -> Element {
         main {
             api::profile::get().iter().map(|directory| rsx!(
                 div {
-                    class: "box",
+                    class: "box content",
                     p { strong { "Directory: " } "{directory.local_path}" }
+                    match &directory.backup_config {
+                        BackupConfig::Local(config) => rsx!(
+                            p { strong { "Type: " } "LOCAL" }
+                            p { strong { "Backup Location: " } "{config.path}" }
+                        ),
+                        BackupConfig::AwsS3(config) => rsx!(
+                            p { strong { "Type: " } "AWS S3" }
+                            p { strong { "Backup Bucket: " } "{config.bucket}" }
+                            p { strong { "Backup Key: " } "{config.key}" }
+                        ),
+                    }
                 }
             )),
         },
