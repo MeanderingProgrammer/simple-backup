@@ -6,7 +6,7 @@ This is so we can later compare it to future scans to determine when something c
 
 This will then allow us to find `new`, `modified`, & `deleted` files and take appropriate actions.
 
-* Created `system_state.rs`, stores names and modification times, stored in local file
+* Created `db/state.rs`, stores names and modification times, stored in local file
 
 ## 2) Create a framework for handling changes
 
@@ -28,7 +28,7 @@ Along with some either metadata, perhaps a sync schedule and credentials.
 
 We'll need to store this information across executions, likely a similar mechanism to directory state.
 
-* Created `user_profiles.rs`, stores list of directories, stored in local file
+* Created `db/profiles.rs`, stores list of directories, stored in local file
 
 ## 4) Create a simple UI
 
@@ -36,7 +36,7 @@ Want some simple UI to be able to add directories to be tracked, and any other c
 
 [dioxus](https://dioxuslabs.com/guide/) will be the basis of the UI.
 
-* Example Application: https://github.com/DioxusLabs/example-projects/blob/master/file-explorer/src/main.rs
+* Example Application: [here](https://github.com/DioxusLabs/example-projects/blob/master/file-explorer/src/main.rs)
 
 Syle uses [bulma.io](https://bulma.io/documentation/).
 
