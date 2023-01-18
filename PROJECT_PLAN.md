@@ -57,3 +57,5 @@ last one that was successfully performed by the current machine.
 
 Will be very similar to using the state of directories to figure out when to do a backup, but inversed and
 based on the state of the backup.
+
+* Store some notion of state in the backup location
