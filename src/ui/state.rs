@@ -3,6 +3,7 @@ use crate::db::profile::UserProfile;
 use crate::db::state::FileState;
 
 use dioxus::prelude::*;
+use itertools::Itertools;
 use std::collections::HashSet;
 
 const DATE_FORMAT: &str = "%Y-%m-%d %H:%M";
@@ -13,13 +14,15 @@ pub fn app(cx: Scope) -> Element {
             rsx!(
                 button { class: "button", onclick: |_| sync_state(cx), "Sync" },
             ),
-            api::state::previous().iter().map(|file| rsx!(
-                div {
-                    class: "box content",
-                    p { strong { "File Path: " } "{file.path}" }
-                    p { strong { "Last Updated: " } "{file.to_date(DATE_FORMAT)}" }
-                }
-            )),
+            api::state::previous().iter()
+                .sorted_by(|a, b| a.path.cmp(&b.path))
+                .map(|file| rsx!(
+                    div {
+                        class: "box content",
+                        p { strong { "File Path: " } "{file.path}" }
+                        p { strong { "Last Updated: " } "{file.to_date(DATE_FORMAT)}" }
+                    }
+                )),
         },
     ))
 }
