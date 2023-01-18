@@ -1,7 +1,11 @@
 use crate::api;
+use crate::db::profile::UserProfile;
+use crate::db::state::FileState;
 
-use chrono::{DateTime, Utc};
 use dioxus::prelude::*;
+use std::collections::HashSet;
+
+const DATE_FORMAT: &str = "%Y-%m-%d %H:%M";
 
 pub fn app(cx: Scope) -> Element {
     cx.render(rsx!(
@@ -13,15 +17,11 @@ pub fn app(cx: Scope) -> Element {
                 div {
                     class: "box content",
                     p { strong { "File Path: " } "{file.path}" }
-                    p { strong { "Last Updated: " } "{format_date(file.to_date())}" }
+                    p { strong { "Last Updated: " } "{file.to_date(DATE_FORMAT)}" }
                 }
             )),
         },
     ))
-}
-
-fn format_date(date_time: DateTime<Utc>) -> String {
-    date_time.format("%Y-%m-%d %H:%M").to_string()
 }
 
 fn sync_state(cx: Scope) {
@@ -35,14 +35,18 @@ fn sync_state(cx: Scope) {
 
     let profile = api::profile::get();
 
-    dbg!("GETTING STARTED");
-    for added_file in &difference.added {
-        let config = profile.get(&added_file.root);
-        config.backup_config.copy_file(added_file);
+    copy_files(&profile, &difference.added);
+    copy_files(&profile, &difference.modified);
 
-        break;
+    current_state.save();
+
+    // Trigger reload in case of change
+    cx.needs_update();
+}
+
+fn copy_files(profile: &UserProfile, files: &HashSet<FileState>) {
+    for file in files {
+        let config = profile.get(&file.root);
+        config.backup_config.copy_file(file);
     }
-
-    // Trigger reload on change
-    //cx.needs_update();
 }

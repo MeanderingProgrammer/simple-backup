@@ -1,6 +1,6 @@
 use crate::db::util;
 
-use chrono::{DateTime, TimeZone, Utc};
+use chrono::{TimeZone, Utc};
 use serde::{Serialize, Deserialize};
 use std::collections::HashSet;
 use std::fs;
@@ -117,8 +117,9 @@ impl FileState {
         }
     }
 
-    pub fn to_date(&self) -> DateTime<Utc> {
+    pub fn to_date(&self, date_format: &str) -> String {
         let time_in_seconds = self.last_modified.try_into().unwrap();
-        Utc.timestamp_opt(time_in_seconds, 0).single().unwrap()
+        let date_time = Utc.timestamp_opt(time_in_seconds, 0).single().unwrap();
+        date_time.format(date_format).to_string()
     }
 }

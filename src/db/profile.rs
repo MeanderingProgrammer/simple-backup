@@ -93,9 +93,6 @@ impl LocalConfig {
     }
 
     pub fn copy_file(&self, file: &FileState) {
-        dbg!(self);
-        dbg!(file);
-
         let from_location = Path::new(&file.path);
 
         let to_path = format!("{}{}", &self.path, &file.suffix);
@@ -103,6 +100,11 @@ impl LocalConfig {
 
         // Create the file if it does not already exist, before starting the copy
         if !to_location.exists() {
+            // Create the directory structure if nedded
+            let directory = to_location.parent().unwrap();
+            if !directory.exists() {
+                fs::create_dir_all(directory).unwrap();
+            }
             fs::OpenOptions::new()
                 .write(true)
                 .create(true)
@@ -110,13 +112,7 @@ impl LocalConfig {
                 .unwrap();
         }
 
-        dbg!(from_location);
-        dbg!(to_location.exists());
-
-        dbg!(from_location.parent());
-        dbg!(to_location.parent());
-        //let result = fs::copy(from_location, to_location);
-        //dbg!(result);
+        fs::copy(from_location, to_location).unwrap();
     }
 }
 
