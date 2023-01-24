@@ -18,10 +18,22 @@ pub fn sync() {
             sync_directory(directory).iter()
                 .for_each(|file| final_state.add(file.clone()));
         });
-    final_state.save("data");
+    //final_state.save("data");
 }
 
 fn sync_directory(directory: &DirectoryConfig) -> SystemState {
+    transfer_data(directory);
+
+    // At this point the current state is our source of truth, however we need to pull it again
+    // first as it may have changed due to retrieving data from the global state
+    // TODO - modify current state on retrieval from global state instead
+
+    let synced_current_state = get_current_state(&directory);
+    //directory.backup_config.save_global_state(&synced_current_state);
+    synced_current_state
+}
+
+fn transfer_data(directory: &DirectoryConfig) {
     let global_state = directory.backup_config.read_global_state();
     let previous_state = get_previous_state(&directory);
     let current_state = get_current_state(&directory);
@@ -48,7 +60,7 @@ fn sync_directory(directory: &DirectoryConfig) -> SystemState {
         } else if global == previous {
             // Scenario b) A change was made locally and needs to be pushed
             dbg!("Scenario b)");
-            directory.backup_config.copy_file(current.unwrap());
+            //directory.backup_config.copy_file(current.unwrap());
         } else if previous == current {
             // Scenario c) A change was made to the backup and needs to be pulled
             dbg!("Scenario c)");
@@ -57,14 +69,6 @@ fn sync_directory(directory: &DirectoryConfig) -> SystemState {
             dbg!("Scenario d)");
         }
     }
-
-    // At this point the current state is our source of truth, however we need to pull it again
-    // first as it may have changed due to retrieving data from the global state
-    // TODO - modify current state on retrieval from global state instead
-
-    let synced_current_state = get_current_state(&directory);
-    directory.backup_config.save_global_state(&synced_current_state);
-    synced_current_state
 }
 
 fn get_previous_state(directory: &DirectoryConfig) -> SystemState {
