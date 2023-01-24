@@ -104,8 +104,8 @@ pub struct StateDifference {
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone)]
 pub struct FileState {
     pub owner_id: String,
-    pub path: String,
     pub root: String,
+    pub path: String,
     pub suffix: String,
     pub last_modified: u64,
 }
@@ -119,8 +119,8 @@ impl FileState {
 
         Self {
             owner_id: directory.id.clone(),
-            path: path_str.clone(),
             root: root.to_string(),
+            path: path_str.clone(),
             suffix: suffix.to_string(),
             last_modified: fs::metadata(path).unwrap()
                 .modified().unwrap()

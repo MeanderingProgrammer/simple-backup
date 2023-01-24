@@ -6,26 +6,40 @@ use itertools::Itertools;
 const DATE_FORMAT: &str = "%Y-%m-%d %H:%M";
 
 pub fn app(cx: Scope) -> Element {
-    cx.render(rsx!(
-        main {
-            rsx!(
-                button { class: "button", onclick: |_| sync_state(cx), "Sync" },
-            ),
-            api::state::previous().iter()
-                .sorted()
-                .map(|file| rsx!(
-                    div {
-                        class: "box content",
-                        p { strong { "File Path: " } "{file.path}" }
-                        p { strong { "Last Updated: " } "{file.to_date(DATE_FORMAT)}" }
+    cx.render(rsx!(main {
+        rsx!(button {
+            class: "button",
+            onclick: |_| {
+                api::state::sync();
+                // Trigger reload in case of change
+                cx.needs_update();
+            },
+            "Sync"
+        })
+        api::state::previous().iter()
+            .sorted()
+            .group_by(|state| state.root.clone())
+            .into_iter()
+            .map(|(root, group)| rsx!(div {
+                class: "box content",
+                p { strong { "Local Directory: " } "{root}" }
+                table {
+                    class: "table",
+                    thead {
+                        tr {
+                            th { "File Path" }
+                            th { "Last Updated" }
+                        }
                     }
-                )),
-        },
-    ))
-}
-
-fn sync_state(cx: Scope) {
-    api::state::sync();
-    // Trigger reload in case of change
-    cx.needs_update();
+                    tbody {
+                        group.map(|state| rsx!(
+                            tr {
+                                td { "{state.suffix}" }
+                                td { "{state.to_date(DATE_FORMAT)}" }
+                            }
+                        ))
+                    }
+                }
+            })),
+    }))
 }
