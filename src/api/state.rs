@@ -1,5 +1,8 @@
 use crate::api::profile;
-use crate::db::profile::UserProfile;
+use crate::db::profile::{
+    DirectoryConfig,
+    UserProfile,
+};
 use crate::db::state::{
     FileState,
     SystemState,
@@ -13,6 +16,9 @@ pub fn previous() -> SystemState {
 }
 
 pub fn sync() {
+    profile::get().iter()
+        .for_each(|directory| sync_directory(directory));
+    /*
     let previous_state = previous();
     let current_state = current();
 
@@ -27,23 +33,32 @@ pub fn sync() {
     copy_files(&profile, &difference.modified);
 
     current_state.save();
+    */
+}
+
+fn sync_directory(directory: &DirectoryConfig) {
+    dbg!(directory);
+    dbg!(get_file_states(&directory.path));
 }
 
 fn current() -> SystemState {
     let profile = profile::get();
     let mut state = SystemState::new();
-    profile.iter().for_each(|directory| {
-        add_file_states(&mut state, &directory.local_path);
-    });
+    profile.iter()
+        .for_each(|directory| {
+            let file_states = get_file_states(&directory.path);
+            file_states.into_iter().for_each(|file_state| state.add(file_state));
+        });
     state
 }
 
-fn add_file_states(state: &mut SystemState, root: &str) {
+fn get_file_states(root: &str) -> Vec<FileState> {
     let glob_pattern = format!("{}/**/*", root);
     glob(&glob_pattern).unwrap()
         .map(|path| path.unwrap())
         .filter(|path| path.is_file())
-        .for_each(|path| state.add(FileState::new(path, root)));
+        .map(|path| FileState::new(path, root))
+        .collect()
 }
 
 fn copy_files(profile: &UserProfile, files: &HashSet<FileState>) {

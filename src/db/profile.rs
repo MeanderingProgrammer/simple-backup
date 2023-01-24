@@ -20,7 +20,7 @@ impl UserProfile {
     }
 
     pub fn get(&self, path: &str) -> &DirectoryConfig {
-        self.iter().find(|directory| directory.local_path == path).unwrap()
+        self.iter().find(|directory| directory.path == path).unwrap()
     }
 
     pub fn iter(&self) -> impl Iterator<Item=&DirectoryConfig> {
@@ -40,7 +40,7 @@ impl UserProfile {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DirectoryConfig {
-    pub local_path: String,
+    pub path: String,
     pub backup_config: BackupConfig,
 }
 

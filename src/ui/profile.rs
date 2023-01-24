@@ -9,7 +9,7 @@ pub fn app(cx: Scope) -> Element {
             api::profile::get().iter().map(|directory| rsx!(
                 div {
                     class: "box content",
-                    p { strong { "Directory: " } "{directory.local_path}" }
+                    p { strong { "Directory: " } "{directory.path}" }
                     match &directory.backup_config {
                         BackupConfig::Local(config) => rsx!(
                             p { strong { "Type: " } "LOCAL" }
