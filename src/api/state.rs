@@ -37,29 +37,54 @@ pub fn sync() {
 }
 
 fn sync_directory(directory: &DirectoryConfig) {
-    dbg!(directory);
-    dbg!(get_file_states(&directory.path));
-    dbg!(SystemState::read("data"));
+    let global_state = directory.backup_config.read_global_state();
+    let previous_state = get_previous_state(&directory);
+    let current_state = get_current_state(&directory);
+
+    dbg!(&directory);
+    dbg!(&global_state);
+    dbg!(&previous_state);
+    dbg!(&current_state);
+
+    for current in current_state.iter() {
+        dbg!(current);
+
+        let global = global_state.get(&current.path);
+        let previous = previous_state.get(&current.path);
+
+        if global == previous && previous == Some(current) {
+            // Scenario a) No changes to sync
+            dbg!("Scenario a)");
+        } else if global == previous {
+            // Scenario b) A change was made locally and needs to be pushed
+            dbg!("Scenario b)");
+        } else if previous == Some(current) {
+            // Scenario c) A change was made to the backup and needs to be pulled
+            dbg!("Scenario c)");
+        } else {
+            // Scenario d) A change was made to both the backup and locally, leading to drift
+            dbg!("Scenario d)");
+        }
+    }
 }
 
-fn current() -> SystemState {
-    let profile = profile::get();
-    let mut state = SystemState::new();
-    profile.iter()
-        .for_each(|directory| {
-            let file_states = get_file_states(&directory.path);
-            file_states.into_iter().for_each(|file_state| state.add(file_state));
-        });
-    state
+fn get_previous_state(directory: &DirectoryConfig) -> SystemState {
+    let previous_state = previous().iter()
+        .filter(|file| file.root == directory.path)
+        .map(|file| file.clone())
+        .collect();
+    SystemState::new(previous_state)
 }
 
-fn get_file_states(root: &str) -> Vec<FileState> {
+fn get_current_state(directory: &DirectoryConfig) -> SystemState {
+    let root = &directory.path;
     let glob_pattern = format!("{}/**/*", root);
-    glob(&glob_pattern).unwrap()
+    let current_state = glob(&glob_pattern).unwrap()
         .map(|path| path.unwrap())
         .filter(|path| path.is_file())
         .map(|path| FileState::new(path, root))
-        .collect()
+        .collect();
+    SystemState::new(current_state)
 }
 
 fn copy_files(profile: &UserProfile, files: &HashSet<FileState>) {

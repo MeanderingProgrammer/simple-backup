@@ -1,4 +1,7 @@
-use crate::db::state::FileState;
+use crate::db::state::{
+    FileState,
+    SystemState,
+};
 
 use serde::{Serialize, Deserialize};
 use std::fs;
@@ -29,6 +32,13 @@ impl BackupConfig {
             Self::Local(config) => config.copy_file(file),
             Self::AwsS3(config) => config.copy_file(file),
         };
+    }
+
+    pub fn read_global_state(&self) -> SystemState {
+        match self {
+            Self::Local(config) => SystemState::read(&config.path),
+            Self::AwsS3(config) => panic!("Read AWS State Not Implemented: Config = {:?}", config),
+        }
     }
 }
 

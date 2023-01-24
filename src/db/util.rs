@@ -9,6 +9,7 @@ use std::path::Path;
 
 pub fn read<T: DeserializeOwned>(root: &str, file_name: &str, default: T) -> T {
     let path = Path::new(root).join(file_name);
+    dbg!(&path);
     match File::open(path) {
         Ok(mut file) => {
             let mut buffer = Vec::<u8>::new();

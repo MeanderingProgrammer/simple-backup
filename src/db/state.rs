@@ -15,9 +15,9 @@ pub struct SystemState {
 }
 
 impl SystemState {
-    pub fn new() -> Self {
+    pub fn new(file_states: HashSet<FileState>) -> Self {
         Self {
-            file_states: HashSet::new(),
+            file_states,
         }
     }
 
@@ -43,7 +43,7 @@ impl SystemState {
             .collect();
 
         let modified = current_paths.intersection(&new_paths)
-            .map(|path| (self.get(path), rhs.get(path)))
+            .map(|path| (self.get(path).unwrap().clone(), rhs.get(path).unwrap().clone()))
             .filter(|(previous, current)| {
                 if previous.last_modified != current.last_modified {
                     assert!(previous.last_modified < current.last_modified, "Only newer files are expected");
@@ -63,8 +63,8 @@ impl SystemState {
         }
     }
 
-    pub fn get(&self, path: &str) -> FileState {
-        self.iter().find(|state| state.path == path).unwrap().clone()
+    pub fn get(&self, path: &str) -> Option<&FileState> {
+        self.iter().find(|state| state.path == path)
     }
 
     pub fn paths(&self) -> HashSet<String> {
@@ -78,7 +78,7 @@ impl SystemState {
     }
 
     pub fn read(root: &str) -> Self {
-        util::read(root, FILE_NAME, Self::new())
+        util::read(root, FILE_NAME, Self::new(HashSet::new()))
     }
 
     pub fn save(&self) {
