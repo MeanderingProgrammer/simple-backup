@@ -15,22 +15,24 @@ impl UserProfile {
         self.directories.push(directory);
     }
 
-    pub fn get(&self, path: &str) -> &DirectoryConfig {
-        self.iter().find(|directory| directory.path == path).unwrap()
-    }
-
     pub fn iter(&self) -> impl Iterator<Item=&DirectoryConfig> {
         self.directories.iter()
     }
 
     pub fn read() -> Self {
-        util::read("data", FILE_NAME, Self {
-            directories: vec![],
-        })
+        util::read("data", FILE_NAME, Self::default())
     }
 
     pub fn save(&self) {
-        util::save(FILE_NAME, self);
+        util::save("data", FILE_NAME, self);
+    }
+}
+
+impl Default for UserProfile {
+    fn default() -> Self {
+        Self {
+            directories: vec![],
+        }
     }
 }
 

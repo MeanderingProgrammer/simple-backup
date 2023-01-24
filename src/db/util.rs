@@ -20,8 +20,10 @@ pub fn read<T: DeserializeOwned>(root: &str, file_name: &str, default: T) -> T {
     }
 }
 
-pub fn save<T: Serialize>(file_name: &str, data: &T) {
+pub fn save<T: Serialize>(root: &str, file_name: &str, data: &T) {
     let encoded = bincode::serialize(data).unwrap();
-    let mut file = File::create(file_name).unwrap();
+    let path = Path::new(root).join(file_name);
+    dbg!(&path);
+    let mut file = File::create(path).unwrap();
     file.write_all(&encoded).unwrap();
 }

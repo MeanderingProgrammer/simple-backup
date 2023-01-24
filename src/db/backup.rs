@@ -40,6 +40,13 @@ impl BackupConfig {
             Self::AwsS3(config) => panic!("Read AWS State Not Implemented: Config = {:?}", config),
         }
     }
+
+    pub fn save_global_state(&self, state: &SystemState) {
+        match self {
+            Self::Local(config) => state.save(&config.path),
+            Self::AwsS3(config) => panic!("Save AWS State Not Implemented: Config = {:?}", config),
+        };
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]

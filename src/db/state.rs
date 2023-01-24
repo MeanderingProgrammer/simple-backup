@@ -78,11 +78,17 @@ impl SystemState {
     }
 
     pub fn read(root: &str) -> Self {
-        util::read(root, FILE_NAME, Self::new(HashSet::new()))
+        util::read(root, FILE_NAME, Self::default())
     }
 
-    pub fn save(&self) {
-        util::save(FILE_NAME, self);
+    pub fn save(&self, root: &str) {
+        util::save(root, FILE_NAME, self);
+    }
+}
+
+impl Default for SystemState {
+    fn default() -> Self {
+        Self::new(HashSet::new())
     }
 }
 
