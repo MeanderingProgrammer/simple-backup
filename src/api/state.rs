@@ -5,6 +5,7 @@ use crate::db::state::{
     SystemState,
 };
 
+use filetime::FileTime;
 use glob::glob;
 
 pub fn previous() -> SystemState {
@@ -64,6 +65,13 @@ fn transfer_data(directory: &DirectoryConfig) {
         } else if previous == current {
             // Scenario c) A change was made to the backup and needs to be pulled
             dbg!("Scenario c)");
+            // Will need to synchronize the modified time to match global state
+            // Use set_file_mtime method to update this value: https://docs.rs/filetime/latest/filetime/fn.set_file_mtime.html
+            // Use from_unix_time to generate the correct value: https://docs.rs/filetime/latest/filetime/struct.FileTime.html#method.from_unix_time
+            dbg!(global.unwrap().last_modified);
+            dbg!(global.unwrap().last_modified as i64);
+            let time_to_set = FileTime::from_unix_time(global.unwrap().last_modified as i64, 0);
+            dbg!(time_to_set);
         } else {
             // Scenario d) A change was made to both the backup and locally, leading to drift
             dbg!("Scenario d)");
