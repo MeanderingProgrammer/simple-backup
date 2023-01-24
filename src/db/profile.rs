@@ -38,6 +38,7 @@ impl Default for UserProfile {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DirectoryConfig {
+    pub id: String,
     pub path: String,
     pub backup_config: BackupConfig,
 }

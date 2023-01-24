@@ -1,3 +1,4 @@
+use crate::db::profile::DirectoryConfig;
 use crate::db::util;
 
 use chrono::{TimeZone, Utc};
@@ -102,6 +103,7 @@ pub struct StateDifference {
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone)]
 pub struct FileState {
+    pub owner_id: String,
     pub path: String,
     pub root: String,
     pub suffix: String,
@@ -109,10 +111,14 @@ pub struct FileState {
 }
 
 impl FileState {
-    pub fn new(path: PathBuf, root: &str) -> Self {
+    pub fn new(path: PathBuf, directory: &DirectoryConfig) -> Self {
+        let root = &directory.path;
+
         let path_str = path.as_path().to_str().unwrap().to_string();
         let suffix = path_str.strip_prefix(root).unwrap();
+
         Self {
+            owner_id: directory.id.clone(),
             path: path_str.clone(),
             root: root.to_string(),
             suffix: suffix.to_string(),

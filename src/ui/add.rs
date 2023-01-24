@@ -4,7 +4,6 @@ use crate::db::backup::{
     BackupConfig,
     LocalConfig,
 };
-use crate::db::profile::DirectoryConfig;
 
 use dioxus::prelude::*;
 use dioxus_router::use_router;
@@ -160,10 +159,7 @@ fn submit(cx: Scope, path: &String, backup_config: &BackupConfig) {
         .for_each(|error| errors.push(error));
 
     if errors.is_empty() {
-        profile::add_directory(DirectoryConfig {
-            path: path.to_string(),
-            backup_config: backup_config.clone(),
-        });
+        profile::add_directory(path.to_string(), backup_config.clone());
         use_router(cx).navigate_to("/");
     } else {
         MessageDialog::new()

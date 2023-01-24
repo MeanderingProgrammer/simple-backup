@@ -2392,6 +2392,7 @@ dependencies = [
  "itertools",
  "native-dialog",
  "serde",
+ "uuid",
 ]
 
 [[package]]
