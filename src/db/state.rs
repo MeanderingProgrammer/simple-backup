@@ -7,7 +7,7 @@ use std::fs;
 use std::path::PathBuf;
 use std::time::SystemTime;
 
-const FILE: &str = "data/state.bin";
+const FILE: &str = "data/.state.bin";
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct SystemState {
@@ -94,7 +94,7 @@ pub struct StateDifference {
     pub modified: HashSet<FileState>,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Hash, Clone)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone)]
 pub struct FileState {
     pub path: String,
     pub root: String,

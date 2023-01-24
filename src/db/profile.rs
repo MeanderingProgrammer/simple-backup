@@ -7,7 +7,7 @@ use serde::{Serialize, Deserialize};
 use std::fs;
 use std::path::Path;
 
-const FILE: &str = "data/profile.bin";
+const FILE: &str = "data/.profile.bin";
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct UserProfile {

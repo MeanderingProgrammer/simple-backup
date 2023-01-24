@@ -13,7 +13,7 @@ cargo run -r
 ### Cleanup State
 
 ```
-rm data/*.bin
+rm data/.*.bin
 ```
 
 ## Test Locations
