@@ -7,7 +7,7 @@ use std::fs;
 use std::path::PathBuf;
 use std::time::SystemTime;
 
-const FILE: &str = "data/.state.bin";
+const FILE_NAME: &str = ".state.bin";
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct SystemState {
@@ -77,12 +77,12 @@ impl SystemState {
         self.file_states.iter()
     }
 
-    pub fn read() -> Self {
-        util::read(FILE, Self::new())
+    pub fn read(root: &str) -> Self {
+        util::read(root, FILE_NAME, Self::new())
     }
 
     pub fn save(&self) {
-        util::save(FILE, self);
+        util::save(FILE_NAME, self);
     }
 }
 

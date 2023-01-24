@@ -1,5 +1,5 @@
 use crate::api;
-use crate::db::profile::BackupConfig;
+use crate::db::backup::BackupConfig;
 
 use dioxus::prelude::*;
 

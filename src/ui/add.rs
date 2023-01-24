@@ -1,10 +1,10 @@
 use crate::api::profile;
-use crate::db::profile::{
+use crate::db::backup::{
     AwsS3Config,
     BackupConfig,
-    DirectoryConfig,
     LocalConfig,
 };
+use crate::db::profile::DirectoryConfig;
 
 use dioxus::prelude::*;
 use dioxus_router::use_router;

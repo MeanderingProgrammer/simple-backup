@@ -12,7 +12,7 @@ use glob::glob;
 use std::collections::HashSet;
 
 pub fn previous() -> SystemState {
-    SystemState::read()
+    SystemState::read("data")
 }
 
 pub fn sync() {
@@ -39,6 +39,7 @@ pub fn sync() {
 fn sync_directory(directory: &DirectoryConfig) {
     dbg!(directory);
     dbg!(get_file_states(&directory.path));
+    dbg!(SystemState::read("data"));
 }
 
 fn current() -> SystemState {

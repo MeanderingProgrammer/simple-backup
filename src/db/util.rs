@@ -5,9 +5,11 @@ use serde::{
 };
 use std::fs::File;
 use std::io::prelude::*;
+use std::path::Path;
 
-pub fn read<T: DeserializeOwned>(file_name: &str, default: T) -> T {
-    match File::open(file_name) {
+pub fn read<T: DeserializeOwned>(root: &str, file_name: &str, default: T) -> T {
+    let path = Path::new(root).join(file_name);
+    match File::open(path) {
         Ok(mut file) => {
             let mut buffer = Vec::<u8>::new();
             file.read_to_end(&mut buffer).unwrap();
