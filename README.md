@@ -4,10 +4,22 @@ A simple way to backup data to different location.
 
 ## Useful Commands
 
+### Cleaning Build
+
+```
+cargo clean
+```
+
 ### Build & Run
 
 ```
 cargo run -r
+```
+
+### Runnning Tests
+
+```
+cargo test
 ```
 
 ### Cleanup State
