@@ -38,6 +38,7 @@ C:\Users\vsusl\Documents\scripts\backup-test
 
 ## Other Docs
 
+* [todo.md](docs/todo.md)
 * [processes.md](docs/processes.md)
 * [project_plan.md](docs/project_plan.md)
 * [references.md](docs/references.md)

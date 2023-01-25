@@ -27,10 +27,10 @@ impl BackupConfig {
         }
     }
 
-    pub fn copy_file(&self, file: &FileState) {
+    pub fn push(&self, file: &FileState) {
         match self {
-            Self::Local(config) => config.copy_file(file),
-            Self::AwsS3(config) => config.copy_file(file),
+            Self::Local(config) => config.push(file),
+            Self::AwsS3(config) => config.push(file),
         };
     }
 
@@ -69,7 +69,7 @@ impl LocalConfig {
         errors
     }
 
-    pub fn copy_file(&self, file: &FileState) {
+    pub fn push(&self, file: &FileState) {
         let from_location = Path::new(&file.path);
 
         let to_path = format!("{}{}", &self.path, &file.suffix);
@@ -117,7 +117,7 @@ impl AwsS3Config {
         errors
     }
 
-    pub fn copy_file(&self, file: &FileState) {
+    pub fn push(&self, file: &FileState) {
         dbg!(file);
         println!("TODO");
     }
