@@ -6,7 +6,7 @@
 ## Install Libraries for Ubuntu
 
 ```
-sudo apt-get install -y libglib2.0
+sudo apt-get install -y lbglib2.0
 sudo apt-get install -y libglib2.0-dev
 sudo apt-get install -y libgtk-3-dev
 sudo apt-get install -y libsoup2.4-dev
