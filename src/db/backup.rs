@@ -7,7 +7,7 @@ use serde::{Serialize, Deserialize};
 use std::fs;
 use std::path::Path;
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum BackupConfig {
     Local(LocalConfig),
     AwsS3(AwsS3Config),
@@ -49,15 +49,9 @@ impl BackupConfig {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
 pub struct LocalConfig {
     pub path: String,
-}
-
-impl Default for LocalConfig {
-    fn default() -> Self {
-        Self { path: String::default() }
-    }
 }
 
 impl LocalConfig {
@@ -93,16 +87,10 @@ impl LocalConfig {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
 pub struct AwsS3Config {
     pub bucket: String,
     pub key: String,
-}
-
-impl Default for AwsS3Config {
-    fn default() -> Self {
-        Self { bucket: String::default(), key: String::default() }
-    }
 }
 
 impl AwsS3Config {

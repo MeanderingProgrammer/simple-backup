@@ -10,20 +10,20 @@ use std::time::SystemTime;
 
 const FILE_NAME: &str = ".state.bin";
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Default)]
 pub struct SystemState {
-    file_states: HashSet<FileState>,
+    file_states: Vec<FileState>,
 }
 
 impl SystemState {
-    pub fn new(file_states: HashSet<FileState>) -> Self {
+    pub fn new(file_states: Vec<FileState>) -> Self {
         Self {
             file_states,
         }
     }
 
     pub fn add(&mut self, file_state: FileState) {
-        self.file_states.insert(file_state);
+        self.file_states.push(file_state);
     }
 
     pub fn get(&self, path: &str) -> Option<&FileState> {
@@ -49,13 +49,7 @@ impl SystemState {
     }
 }
 
-impl Default for SystemState {
-    fn default() -> Self {
-        Self::new(HashSet::new())
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct FileState {
     pub owner_id: String,
     pub root: String,

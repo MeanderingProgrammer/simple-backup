@@ -7,7 +7,6 @@ use crate::db::state::{
 use crate::manager::state::StateManager;
 
 use glob::glob;
-use std::collections::HashSet;
 
 pub fn previous() -> SystemState {
     SystemState::read("data")
@@ -45,14 +44,14 @@ fn sync_directory(directory: &DirectoryConfig) -> SystemState {
     synced_current_state
 }
 
-fn get_previous(directory: &DirectoryConfig) -> HashSet<FileState> {
+fn get_previous(directory: &DirectoryConfig) -> Vec<FileState> {
     previous().iter()
         .filter(|state| state.owner_id == directory.id)
         .map(|state| state.clone())
         .collect()
 }
 
-fn get_current(directory: &DirectoryConfig) -> HashSet<FileState> {
+fn get_current(directory: &DirectoryConfig) -> Vec<FileState> {
     let glob_pattern = format!("{}/**/*", directory.path);
     glob(&glob_pattern).unwrap()
         .map(|path| path.unwrap())

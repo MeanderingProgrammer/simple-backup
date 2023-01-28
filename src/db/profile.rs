@@ -5,7 +5,7 @@ use serde::{Serialize, Deserialize};
 
 const FILE_NAME: &str = ".profile.bin";
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct UserProfile {
     directories: Vec<DirectoryConfig>,
 }
@@ -32,15 +32,7 @@ impl UserProfile {
     }
 }
 
-impl Default for UserProfile {
-    fn default() -> Self {
-        Self {
-            directories: vec![],
-        }
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct DirectoryConfig {
     pub id: String,
     pub path: String,
