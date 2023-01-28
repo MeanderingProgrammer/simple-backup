@@ -52,6 +52,20 @@ impl<'a> StateManager<'a> {
         let previous = self.previous_state.get(file_path);
         let current = self.current_state.get(file_path);
 
+        match (global, previous, current) {
+            (Some(global_file), Some(previous_file), Some(current_file)) => println!("ALL EXIST"),
+
+            (None, Some(previous_file), Some(current_file)) => println!("NOT GLOBALLY TRACKED"),
+            (Some(global_file), None, Some(current_file)) => println!("NEW TO CURRENT COMPUTER"),
+            (Some(global_file), Some(previous_file), None) => println!("REMOVED FROM CURRENT COMPUTER"),
+
+            (None, None, Some(current_file)) => println!("ONLY ON CURRENT"),
+            (None, Some(previous_file), None) => println!("ONLY ON PREVIOUS"),
+            (Some(global_file), None, None) => println!("ONLY ON GLOBAL"),
+
+            (None, None, None) => panic!("Attempting to sync a file not being tracked anywhere"),
+        };
+
         // 1. Previous is ahead of current, this should never happen, and we'll
         //    assume it never does.
         //

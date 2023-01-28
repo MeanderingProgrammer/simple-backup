@@ -19,6 +19,10 @@ impl UserProfile {
         self.directories.iter()
     }
 
+    pub fn get_by_id(&self, id: &str) -> Option<&DirectoryConfig> {
+        self.iter().find(|directory| directory.id == id)
+    }
+
     pub fn read() -> Self {
         util::read("data", FILE_NAME, Self::default())
     }
@@ -36,7 +40,7 @@ impl Default for UserProfile {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct DirectoryConfig {
     pub id: String,
     pub path: String,

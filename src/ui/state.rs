@@ -1,4 +1,5 @@
 use crate::api;
+use crate::ui;
 
 use dioxus::prelude::*;
 use itertools::Itertools;
@@ -8,7 +9,7 @@ const DATE_FORMAT: &str = "%Y-%m-%d %H:%M";
 pub fn app(cx: Scope) -> Element {
     cx.render(rsx!(main {
         rsx!(button {
-            class: "button",
+            class: "button is-primary is-fullwidth",
             onclick: |_| {
                 api::state::sync();
                 // Trigger reload in case of change
@@ -18,28 +19,29 @@ pub fn app(cx: Scope) -> Element {
         })
         api::state::previous().iter()
             .sorted()
-            .group_by(|state| state.root.clone())
+            .group_by(|state| state.owner_id.clone())
             .into_iter()
-            .map(|(root, group)| rsx!(div {
-                class: "box content",
-                p { strong { "Local Directory: " } "{root}" }
-                table {
-                    class: "table",
-                    thead {
-                        tr {
+            .map(|(profile_id, group)| {
+                let directory = api::profile::get_by_id(&profile_id);
+                rsx!(div {
+                    class: "box content",
+                    ui::profile::render_directory {
+                        directory: directory.clone(),
+                    }
+                    table {
+                        class: "table",
+                        thead { tr {
                             th { "File Path" }
                             th { "Last Updated" }
-                        }
-                    }
-                    tbody {
-                        group.map(|state| rsx!(
-                            tr {
+                        }}
+                        tbody {
+                            group.map(|state| rsx!(tr {
                                 td { "{state.suffix}" }
                                 td { "{state.to_date(DATE_FORMAT)}" }
-                            }
-                        ))
+                            }))
+                        }
                     }
-                }
-            })),
+                })
+            })
     }))
 }
