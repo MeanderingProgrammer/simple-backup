@@ -5,7 +5,6 @@ use crate::db::state::{
     SystemState,
 };
 
-use filetime::FileTime;
 use std::collections::HashSet;
 
 /**
@@ -70,13 +69,13 @@ impl<'a> StateManager<'a> {
                         Some(current_file.clone())
                     },
                     (true, false) => Some(self.push_to_backup(current_file)),
-                    (false, true) => Some(pull_from_backup(backup_file)),
+                    (false, true) => Some(self.pull_from_backup(backup_file)),
                     (true, true) => panic!("{} has changed both locally and in backup, for now we crash", &file_path),
                 }
             },
 
             (None, _, Some(current_file)) => Some(self.push_to_backup(current_file)),
-            (Some(backup_file), _, None) => Some(pull_from_backup(backup_file)),
+            (Some(backup_file), _, None) => Some(self.pull_from_backup(backup_file)),
 
             (None, Some(_), None) => {
                 println!("File was removed locally and from backup, nothing to do");
@@ -99,18 +98,9 @@ impl<'a> StateManager<'a> {
         self.backup_config.push(current_file);
         current_file.clone()
     }
-}
 
-fn pull_from_backup(backup_file: &FileState) -> FileState {
-    // Will need to synchronize the modified time to match global state
-    // Use set_file_mtime method to update this value:
-    //  * https://docs.rs/filetime/latest/filetime/fn.set_file_mtime.html
-    // Use from_unix_time to generate the correct value:
-    //  * https://docs.rs/filetime/latest/filetime/struct.FileTime.html#method.from_unix_time
-    dbg!(backup_file.last_modified);
-    dbg!(backup_file.last_modified as i64);
-    let time_to_set = FileTime::from_unix_time(backup_file.last_modified as i64, 0);
-    dbg!(time_to_set);
-    //backup_file.clone()
-    panic!("TODO THIS BIT OF STUFF");
+    fn pull_from_backup(&self, backup_file: &FileState) -> FileState {
+        self.backup_config.pull(backup_file);
+        backup_file.clone()
+    }
 }

@@ -19,8 +19,7 @@ pub fn sync() {
             final_state.add(file.clone());
         });
     });
-    dbg!(&final_state);
-    //final_state.save("data");
+    final_state.save("data");
 }
 
 fn sync_directory(directory: &DirectoryConfig) -> SystemState {
@@ -29,17 +28,9 @@ fn sync_directory(directory: &DirectoryConfig) -> SystemState {
         let backup_state = directory.backup_config.read_backup_state();
         let current_state = SystemState::new(get_current(directory));
 
-        dbg!(&previous_state);
-        dbg!(&backup_state);
-        dbg!(&current_state);
-
         let synced_state = StateManager::new(directory, &backup_state, &previous_state, &current_state).sync_directory();
-
-        dbg!(&synced_state);
-        //directory.backup_config.save_backup_state(&synced_state);
-
+        directory.backup_config.save_backup_state(&synced_state);
         synced_state
-        //previous_state
     } else {
         println!("BACKUP NOT CONNECTED: RE-USING PREVIOUS STATE");
         previous_state
