@@ -41,14 +41,14 @@ impl BackupConfig {
         }
     }
 
-    pub fn read_global_state(&self) -> SystemState {
+    pub fn read_backup_state(&self) -> SystemState {
         match self {
             Self::Local(config) => SystemState::read(&config.path),
             Self::AwsS3(config) => panic!("Read AWS State Not Implemented: Config = {:?}", config),
         }
     }
 
-    pub fn save_global_state(&self, state: &SystemState) {
+    pub fn save_backup_state(&self, state: &SystemState) {
         match self {
             Self::Local(config) => state.save(&config.path),
             Self::AwsS3(config) => panic!("Save AWS State Not Implemented: Config = {:?}", config),

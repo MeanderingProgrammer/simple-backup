@@ -19,22 +19,18 @@ pub fn sync() {
             final_state.add(file.clone());
         });
     });
-    //final_state.save("data");
+    final_state.save("data");
 }
 
 fn sync_directory(directory: &DirectoryConfig) -> SystemState {
-    dbg!(directory);
-
     let previous_state = SystemState::new(get_previous(directory));
-    dbg!(&previous_state);
-
     if directory.backup_config.exists() {
-        let global_state = directory.backup_config.read_global_state();
+        let backup_state = directory.backup_config.read_backup_state();
         let current_state = SystemState::new(get_current(directory));
 
         let state_manager = StateManager::new(
             directory,
-            &global_state,
+            &backup_state,
             &previous_state,
             &current_state,
         );
@@ -42,10 +38,8 @@ fn sync_directory(directory: &DirectoryConfig) -> SystemState {
 
         // At this point the current state is our source of truth, however we need to pull it again
         // first as it may have changed due to retrieving data from the global state
-
-        // TODO - modify current state on retrieval from global state instead
         let synced_current_state = SystemState::new(get_current(&directory));
-        //directory.backup_config.save_global_state(&synced_current_state);
+        directory.backup_config.save_backup_state(&synced_current_state);
         synced_current_state
     } else {
         println!("BACKUP NOT CONNECTED: RE-USING PREVIOUS STATE");
