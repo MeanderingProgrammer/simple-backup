@@ -34,13 +34,9 @@ fn sync_directory(directory: &DirectoryConfig) -> SystemState {
             &previous_state,
             &current_state,
         );
-        state_manager.sync_directory();
-
-        // At this point the current state is our source of truth, however we need to pull it again
-        // first as it may have changed due to retrieving data from the global state
-        let synced_current_state = SystemState::new(get_current(&directory));
-        directory.backup_config.save_backup_state(&synced_current_state);
-        synced_current_state
+        let synced_state = state_manager.sync_directory();
+        directory.backup_config.save_backup_state(&synced_state);
+        synced_state
     } else {
         println!("BACKUP NOT CONNECTED: RE-USING PREVIOUS STATE");
         previous_state
