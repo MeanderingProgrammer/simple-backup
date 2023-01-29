@@ -49,7 +49,7 @@ impl BackupConfig {
     pub fn push(&self, file: &FileState) {
         match self {
             Self::Local(config) => config.push(file),
-            Self::AwsS3(config) => config.push(file),
+            Self::AwsS3(config) => panic!("Push AWS State Not Implemented: Config = {:?}", config),
         };
     }
 
@@ -135,10 +135,5 @@ impl AwsS3Config {
             errors.push("No key provided for aws configuration");
         }
         errors
-    }
-
-    pub fn push(&self, file: &FileState) {
-        dbg!(file);
-        println!("TODO");
     }
 }
