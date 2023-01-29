@@ -94,7 +94,6 @@ impl LocalConfig {
 
         // Create the file if it does not already exist, before starting the copy
         util::create_file_at_path(&to_location);
-
         fs::copy(from_location, to_location).unwrap();
     }
 
@@ -106,7 +105,6 @@ impl LocalConfig {
 
         // Create the file if it does not already exist, before starting the copy
         util::create_file_at_path(&to_location);
-
         fs::copy(from_location, to_location).unwrap();
 
         // Handles synchronizing the modified time to match global state
