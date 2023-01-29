@@ -15,6 +15,11 @@ impl UserProfile {
         self.directories.push(directory);
     }
 
+    pub fn delete(&mut self, id: &str) {
+        let index = self.iter().position(|directory| directory.id == id).unwrap();
+        self.directories.remove(index);
+    }
+
     pub fn iter(&self) -> impl Iterator<Item=&DirectoryConfig> {
         self.directories.iter()
     }

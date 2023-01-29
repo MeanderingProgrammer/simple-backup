@@ -27,6 +27,7 @@ pub fn app(cx: Scope) -> Element {
                     class: "box content",
                     ui::profile::render_directory {
                         directory: directory.clone(),
+                        allow_delete: false,
                     }
                     table {
                         class: "table",

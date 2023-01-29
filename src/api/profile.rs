@@ -23,3 +23,9 @@ pub fn add_directory(path: String, backup_config: BackupConfig) {
     });
     profile.save();
 }
+
+pub fn delete_directory(id: &str) {
+    let mut profile = get();
+    profile.delete(id);
+    profile.save();
+}
