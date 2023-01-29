@@ -1,9 +1,7 @@
 use crate::api::profile;
-use crate::db::backup::{
-    AwsS3Config,
-    BackupConfig,
-    LocalConfig,
-};
+use crate::backup::aws::AwsS3Config;
+use crate::backup::backup::BackupConfig;
+use crate::backup::local::LocalConfig;
 
 use dioxus::prelude::*;
 use dioxus_router::use_router;

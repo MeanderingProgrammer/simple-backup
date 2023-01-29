@@ -1,4 +1,4 @@
-use crate::db::backup::BackupConfig;
+use crate::backup::backup::BackupConfig;
 use crate::db::util;
 
 use serde::{Serialize, Deserialize};
