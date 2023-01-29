@@ -24,11 +24,11 @@ impl AwsS3Config {
         panic!("AWS State Exists Not Implemented: Config = {:?}", self);
     }
 
-    pub fn push(&self, file: &FileState) {
+    pub fn push(&self, _file: &FileState) {
         panic!("Push AWS State Not Implemented: Config = {:?}", self);
     }
 
-    pub fn pull(&self, file: &FileState) {
+    pub fn pull(&self, _file: &FileState) {
         panic!("Pull AWS State Not Implemented: Config = {:?}", self);
     }
 }
