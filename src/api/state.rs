@@ -23,25 +23,34 @@ pub fn sync() {
 }
 
 fn sync_directory(directory: &DirectoryConfig) -> SystemState {
-    let global_state = directory.backup_config.read_global_state();
+    dbg!(directory);
+
     let previous_state = SystemState::new(get_previous(directory));
-    let current_state = SystemState::new(get_current(directory));
+    dbg!(&previous_state);
 
-    let state_manager = StateManager::new(
-        directory,
-        &global_state,
-        &previous_state,
-        &current_state,
-    );
-    state_manager.sync_directory();
+    if directory.backup_config.exists() {
+        let global_state = directory.backup_config.read_global_state();
+        let current_state = SystemState::new(get_current(directory));
 
-    // At this point the current state is our source of truth, however we need to pull it again
-    // first as it may have changed due to retrieving data from the global state
+        let state_manager = StateManager::new(
+            directory,
+            &global_state,
+            &previous_state,
+            &current_state,
+        );
+        state_manager.sync_directory();
 
-    // TODO - modify current state on retrieval from global state instead
-    let synced_current_state = SystemState::new(get_current(&directory));
-    //directory.backup_config.save_global_state(&synced_current_state);
-    synced_current_state
+        // At this point the current state is our source of truth, however we need to pull it again
+        // first as it may have changed due to retrieving data from the global state
+
+        // TODO - modify current state on retrieval from global state instead
+        let synced_current_state = SystemState::new(get_current(&directory));
+        //directory.backup_config.save_global_state(&synced_current_state);
+        synced_current_state
+    } else {
+        println!("BACKUP NOT CONNECTED: RE-USING PREVIOUS STATE");
+        previous_state
+    }
 }
 
 fn get_previous(directory: &DirectoryConfig) -> Vec<FileState> {

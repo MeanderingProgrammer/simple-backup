@@ -34,6 +34,13 @@ impl BackupConfig {
         };
     }
 
+    pub fn exists(&self) -> bool {
+        match self {
+            Self::Local(config) => config.exists(),
+            Self::AwsS3(config) => panic!("AWS State Exists Not Implemented: Config = {:?}", config),
+        }
+    }
+
     pub fn read_global_state(&self) -> SystemState {
         match self {
             Self::Local(config) => SystemState::read(&config.path),
@@ -61,6 +68,10 @@ impl LocalConfig {
             errors.push("No backup directory provided for local configuration");
         }
         errors
+    }
+
+    pub fn exists(&self) -> bool {
+        Path::new(&self.path).exists()
     }
 
     pub fn push(&self, file: &FileState) {

@@ -8,6 +8,15 @@ use crate::db::state::{
 use filetime::FileTime;
 use std::collections::HashSet;
 
+/**
+ * StateManager assumes that a connection to the backup exists
+ *
+ * This means that if global state returns an empty state for a file then it does not exist,
+ * as opposed to, for example, not being able to connect AWS to pull the global state.
+ *
+ * An entirely empty global state means this is the first time we're syncing.
+ */
+
 #[derive(Debug)]
 pub struct StateManager<'a> {
     directory: &'a DirectoryConfig,
