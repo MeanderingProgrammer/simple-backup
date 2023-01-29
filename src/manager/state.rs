@@ -58,35 +58,29 @@ impl<'a> StateManager<'a> {
         file_paths
     }
 
-    fn sync_file(&self, file_path: &String) -> Option<FileState> {
+    fn sync_file(&self, file_path: &str) -> Option<FileState> {
         match self.get_states(file_path) {
             (Some(backup_file), Some(previous_file), Some(current_file)) => {
                 let local_changed = previous_file != current_file;
-                let backup_changed = backup_file != previous_file;
+                let backup_changed = previous_file != backup_file;
                 match (local_changed, backup_changed) {
-                    (false, false) => {
-                        println!("{} has not changed, nothing to do", &file_path);
-                        Some(current_file.clone())
-                    },
-                    (true, false) => Some(self.push_to_backup(current_file)),
-                    (false, true) => Some(self.pull_from_backup(backup_file)),
-                    (true, true) => panic!("{} has changed both locally and in backup, for now we crash", &file_path),
+                    (false, false) => self.unchanged_file(file_path, current_file),
+                    (true, false) => self.push_to_backup(file_path, current_file),
+                    (false, true) => self.pull_from_backup(file_path, backup_file),
+                    (true, true) => panic!("{file_path}: Has been modified both locally and in backup, for now we crash :("),
                 }
             },
 
-            (None, _, Some(current_file)) => Some(self.push_to_backup(current_file)),
-            (Some(backup_file), _, None) => Some(self.pull_from_backup(backup_file)),
+            (None, _, Some(current_file)) => self.push_to_backup(file_path, current_file),
+            (Some(backup_file), _, None) => self.pull_from_backup(file_path, backup_file),
 
-            (None, Some(_), None) => {
-                println!("File was removed locally and from backup, nothing to do");
-                None
-            },
-            (Some(_), None, Some(_)) => panic!("File exists locally but was not pulled down correctly"),
-            (None, None, None) => panic!("Attempting to sync a file not being tracked anywhere, should not be possible"),
+            (None, Some(_), None) => self.removed_file(file_path),
+            (Some(_), None, Some(_)) => panic!("{file_path}: Exists locally but was not pulled down correctly"),
+            (None, None, None) => panic!("{file_path}: Attempting to sync a file not being tracked anywhere"),
         }
     }
 
-    fn get_states(&self, file_path: &String) -> (Option<&FileState>, Option<&FileState>, Option<&FileState>) {
+    fn get_states(&self, file_path: &str) -> (Option<&FileState>, Option<&FileState>, Option<&FileState>) {
         (
             self.backup_state.get(file_path),
             self.previous_state.get(file_path),
@@ -94,13 +88,25 @@ impl<'a> StateManager<'a> {
         )
     }
 
-    fn push_to_backup(&self, current_file: &FileState) -> FileState {
-        self.backup_config.push(current_file);
-        current_file.clone()
+    fn unchanged_file(&self, file_path: &str, current_file: &FileState) -> Option<FileState> {
+        println!("{file_path}: Has not been modified, nothing to do");
+        Some(current_file.clone())
     }
 
-    fn pull_from_backup(&self, backup_file: &FileState) -> FileState {
+    fn removed_file(&self, file_path: &str) -> Option<FileState> {
+        println!("{file_path}: Was removed locally and from backup, nothing to do");
+        None
+    }
+
+    fn push_to_backup(&self, file_path: &str, current_file: &FileState) -> Option<FileState> {
+        println!("{file_path}: Has been modified locally, pushing to backup");
+        self.backup_config.push(current_file);
+        Some(current_file.clone())
+    }
+
+    fn pull_from_backup(&self, file_path: &str, backup_file: &FileState) -> Option<FileState> {
+        println!("{file_path}: Has been modified in backup, pulling from backup");
         self.backup_config.pull(backup_file);
-        backup_file.clone()
+        Some(backup_file.clone())
     }
 }
