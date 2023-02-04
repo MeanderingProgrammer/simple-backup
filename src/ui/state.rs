@@ -10,7 +10,7 @@ pub fn app(cx: Scope) -> Element {
     cx.render(rsx!(main {
         button {
             class: "button is-primary is-fullwidth",
-            onclick: |_| {
+            onclick: move |_| {
                 api::state::sync();
                 // Trigger reload in case of change
                 cx.needs_update();
@@ -26,8 +26,7 @@ pub fn app(cx: Scope) -> Element {
                 rsx!(div {
                     class: "box content",
                     ui::profile::render_directory {
-                        directory: directory.clone(),
-                        allow_delete: false,
+                        directory: directory.clone()
                     }
                     table {
                         class: "table",

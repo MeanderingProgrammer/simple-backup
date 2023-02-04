@@ -87,7 +87,7 @@ pub fn app(cx: Scope) -> Element {
         h4 { class: "title is-4", "Tracking Settings" }
         select_folder {
             directory_type: "input".to_string(),
-            on_select: |new_path| path.set(new_path),
+            on_select: move |new_path| path.set(new_path),
         }
 
         h4 { class: "title is-4", "Backup Settings" }

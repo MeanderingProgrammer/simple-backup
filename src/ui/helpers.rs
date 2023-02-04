@@ -10,7 +10,7 @@ pub fn app(cx: Scope) -> Element {
     cx.render(rsx!(main {
         button {
             class: "button is-dark is-fullwidth",
-            onclick: |_| {
+            onclick: move |_| {
                 add_directory("file-local", "file-backup");
                 add_directory("local", "backup");
             },
