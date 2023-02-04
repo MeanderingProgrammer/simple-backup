@@ -23,11 +23,13 @@ pub fn entry_point(cx: Scope) -> Element {
                 Link { class: "navbar-item", active_class: "is-active", to: "/", "Home" }
                 Link { class: "navbar-item", active_class: "is-active", to: "/add", "Add" }
                 Link { class: "navbar-item", active_class: "is-active", to: "/state", "State" }
+                Link { class: "navbar-item", active_class: "is-active", to: "/helpers", "Helpers" }
             },
             // The actual route definitions
             Route { to: "/", ui::profile::app {} }
             Route { to: "/add", ui::add::app {} }
             Route { to: "/state", ui::state::app {} }
+            Route { to: "/helpers", ui::helpers::app {} }
         },
     ))
 }

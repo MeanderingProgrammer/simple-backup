@@ -8,7 +8,7 @@ const DATE_FORMAT: &str = "%Y-%m-%d %H:%M";
 
 pub fn app(cx: Scope) -> Element {
     cx.render(rsx!(main {
-        rsx!(button {
+        button {
             class: "button is-primary is-fullwidth",
             onclick: |_| {
                 api::state::sync();
@@ -16,7 +16,7 @@ pub fn app(cx: Scope) -> Element {
                 cx.needs_update();
             },
             "Sync"
-        })
+        }
         api::state::previous().iter()
             .sorted()
             .group_by(|state| state.owner_id.clone())
