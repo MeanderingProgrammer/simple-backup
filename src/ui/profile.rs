@@ -1,12 +1,9 @@
 use crate::api;
 use crate::backup::backup::BackupConfig;
 use crate::db::profile::DirectoryConfig;
+use crate::ui::alert;
 
 use dioxus::prelude::*;
-use native_dialog::{
-    MessageDialog,
-    MessageType,
-};
 
 pub fn app(cx: Scope) -> Element {
     let profile = use_state(&cx, api::profile::get);
@@ -17,7 +14,7 @@ pub fn app(cx: Scope) -> Element {
             onclick: move |_| {
                 delete_mode.set(!delete_mode.get());
             },
-            if *delete_mode.get() { "Disable Delete" } else { "Enable Delete" }
+            if *delete_mode.get() { "Disable" } else { "Enable" } " Delete"
         })
         profile.iter()
             .map(|directory| rsx!(div {
@@ -26,13 +23,7 @@ pub fn app(cx: Scope) -> Element {
                     rsx!(button {
                         class: "delete",
                         onclick: move |_| {
-                            let response = MessageDialog::new()
-                                .set_type(MessageType::Info)
-                                .set_title("Are you sure you want to delete this backup?")
-                                .set_text(&format!("{:#?}", directory.path))
-                                .show_confirm()
-                                .unwrap();
-
+                            let response = alert::info("Are you sure you want to delete this backup?", &directory.path);
                             if response {
                                 api::profile::delete_directory(&directory.id);
                                 profile.set(api::profile::get());

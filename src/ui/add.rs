@@ -2,14 +2,10 @@ use crate::api::profile;
 use crate::backup::aws::AwsS3Config;
 use crate::backup::backup::BackupConfig;
 use crate::backup::local::LocalConfig;
+use crate::ui::alert;
 
 use dioxus::prelude::*;
 use dioxus_router::use_router;
-use native_dialog::{
-    FileDialog,
-    MessageDialog,
-    MessageType,
-};
 
 #[inline_props]
 fn select_folder<'a>(cx: Scope<'a>, directory_type: String, on_select: EventHandler<'a, String>) -> Element {
@@ -19,7 +15,7 @@ fn select_folder<'a>(cx: Scope<'a>, directory_type: String, on_select: EventHand
         span {
             class: "file-cta",
             onclick: move |_| {
-                let directory = select_directory().unwrap_or_default();
+                let directory = alert::directory_select().unwrap_or_default();
                 folder.set(directory.clone());
                 on_select.call(directory.clone());
             },
@@ -127,19 +123,6 @@ pub fn app(cx: Scope) -> Element {
     }))
 }
 
-fn select_directory() -> Option<String> {
-    let selected_path = FileDialog::new()
-        .show_open_single_dir()
-        .unwrap();
-    match selected_path {
-        Some(path) => {
-            let directory = path.to_str().unwrap();
-            Some(directory.to_string())
-        },
-        None => None,
-    }
-}
-
 fn submit(cx: Scope, path: &String, backup_config: &BackupConfig) {
     let mut errors = Vec::new();
     if path.is_empty() {
@@ -152,11 +135,6 @@ fn submit(cx: Scope, path: &String, backup_config: &BackupConfig) {
         profile::add_directory(path.to_string(), backup_config.clone());
         use_router(cx).navigate_to("/");
     } else {
-        MessageDialog::new()
-            .set_type(MessageType::Error)
-            .set_title("Invalid input provided")
-            .set_text(&format!("{:#?}", errors))
-            .show_alert()
-            .unwrap();
+        alert::error("Invalid input provided", &format!("{:#?}", errors));
     }
 }
