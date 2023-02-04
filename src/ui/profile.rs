@@ -22,7 +22,6 @@ pub fn app(cx: Scope) -> Element {
         profile.iter()
             .map(|directory| rsx!(div {
                 class: "box content",
-
                 if *delete_mode.get() {
                     rsx!(button {
                         class: "delete",
@@ -42,7 +41,6 @@ pub fn app(cx: Scope) -> Element {
                         "DELETE"
                     })
                 }
-
                 render_directory {
                     directory: directory.clone(),
                 }
