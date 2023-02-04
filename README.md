@@ -28,14 +28,6 @@ cargo test
 rm data/.*.bin
 ```
 
-## Testing
-
-### Local Locations
-
-```
-C:\Users\vsusl\Documents\scripts\backup-test
-```
-
 ## Other Docs
 
 * [todo.md](docs/todo.md)
