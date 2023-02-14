@@ -36,7 +36,7 @@ pub fn app(cx: Scope) -> Element {
                         }}
                         tbody {
                             group.map(|state| rsx!(tr {
-                                td { "{state.suffix}" }
+                                td { "{&state.suffix[1..]}" }
                                 td { "{state.to_date(DATE_FORMAT)}" }
                             }))
                         }
