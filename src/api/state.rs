@@ -4,7 +4,7 @@ use crate::db::state::{
     FileState,
     SystemState,
 };
-use crate::manager::state::StateManager;
+use crate::manager::state::SystemStateManager;
 
 use glob::glob;
 
@@ -15,9 +15,8 @@ pub fn previous() -> SystemState {
 pub fn sync() {
     let mut final_state = SystemState::default();
     profile::get().iter().for_each(|directory| {
-        sync_directory(directory).iter().for_each(|file| {
-            final_state.add(file.clone());
-        });
+        let synced_state = sync_directory(directory);
+        synced_state.iter().for_each(|file| final_state.add(file.clone()));
     });
     final_state.save("data");
 }
@@ -28,7 +27,8 @@ fn sync_directory(directory: &DirectoryConfig) -> SystemState {
         let backup_state = directory.backup_config.read_backup_state();
         let current_state = SystemState::new(get_current(directory));
 
-        let synced_state = StateManager::new(directory, &backup_state, &previous_state, &current_state).sync_directory();
+        let state_manager = SystemStateManager::new(directory, &backup_state, &previous_state, &current_state);
+        let synced_state = state_manager.sync_directory();
         directory.backup_config.save_backup_state(&synced_state);
         synced_state
     } else {

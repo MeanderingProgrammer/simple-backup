@@ -17,14 +17,14 @@ use std::collections::HashSet;
  */
 
 #[derive(Debug)]
-pub struct StateManager<'a> {
+pub struct SystemStateManager<'a> {
     backup_config: &'a BackupConfig,
     backup_state: &'a SystemState,
     previous_state: &'a SystemState,
     current_state: &'a SystemState,
 }
 
-impl<'a> StateManager<'a> {
+impl<'a> SystemStateManager<'a> {
     pub fn new(
         directory: &'a DirectoryConfig,
         backup_state: &'a SystemState,
