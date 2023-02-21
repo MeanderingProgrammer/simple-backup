@@ -84,6 +84,7 @@ impl FileState {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use assert_fs::fixture::NamedTempFile;
 
     const TEST_OWNER_ID: &str = "42135de4-c71f-4097-a7ba-7551eadca921";
     const TEST_WINDOWS_ROOT: &str = "C:\\Users\\vsusl\\Documents\\scripts\\backup-test\\local";
@@ -96,6 +97,12 @@ mod tests {
             PathBuf::from(format!("{}\\folder-1\\file-1.txt", TEST_WINDOWS_ROOT)),
         );
         println!("{:#?}", state);
+
+
+        let temp_file = NamedTempFile::new("foo.rs").unwrap();
+        println!("{:#?}", temp_file);
+        temp_file.close().unwrap();
+
         assert_eq!(4, 4);
     }
 }
