@@ -1,8 +1,5 @@
 use bincode;
-use serde::{
-    Serialize,
-    de::DeserializeOwned,
-};
+use serde::{Serialize, de::DeserializeOwned};
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;

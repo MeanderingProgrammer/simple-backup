@@ -1,7 +1,4 @@
-use std::fs::{
-    create_dir_all,
-    OpenOptions,
-};
+use std::fs::{create_dir_all, OpenOptions};
 use std::path::Path;
 
 pub fn create_file_at_path(path: &Path) {

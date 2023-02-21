@@ -1,11 +1,7 @@
 use crate::ui;
 
 use dioxus::prelude::*;
-use dioxus_router::{
-    Link,
-    Route,
-    Router,
-};
+use dioxus_router::{Link, Route, Router};
 
 pub fn entry_point(cx: Scope) -> Element {
     cx.render(rsx!(

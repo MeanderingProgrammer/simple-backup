@@ -1,10 +1,6 @@
 use simple_backup::ui::app;
 
-use dioxus_desktop::{
-    Config,
-    WindowBuilder,
-    tao::window::Icon,
-};
+use dioxus_desktop::{Config, WindowBuilder, tao::window::Icon};
 
 fn main() {
     let window = WindowBuilder::new()

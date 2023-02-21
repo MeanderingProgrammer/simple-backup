@@ -1,8 +1,4 @@
-use native_dialog::{
-    FileDialog,
-    MessageDialog,
-    MessageType,
-};
+use native_dialog::{FileDialog, MessageDialog, MessageType};
 
 pub fn info(title: &str, text: &str) -> bool {
     MessageDialog::new()

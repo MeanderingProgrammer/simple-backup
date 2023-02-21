@@ -1,9 +1,6 @@
 use crate::api::profile;
 use crate::db::profile::DirectoryConfig;
-use crate::db::state::{
-    FileState,
-    SystemState,
-};
+use crate::db::state::{FileState, SystemState};
 use crate::manager::system::SystemStateManager;
 
 use glob::glob;
@@ -49,6 +46,6 @@ fn get_current(directory: &DirectoryConfig) -> Vec<FileState> {
     glob(&glob_pattern).unwrap()
         .map(|path| path.unwrap())
         .filter(|path| path.is_file())
-        .map(|path| FileState::new(path, directory))
+        .map(|path| FileState::new(&directory.id, &directory.path, path))
         .collect()
 }

@@ -1,9 +1,6 @@
 use crate::backup::aws::AwsS3Config;
 use crate::backup::local::LocalConfig;
-use crate::db::state::{
-    FileState,
-    SystemState,
-};
+use crate::db::state::{FileState, SystemState};
 
 use serde::{Serialize, Deserialize};
 

@@ -1,8 +1,5 @@
 use crate::backup::backup::BackupConfig;
-use crate::db::profile::{
-    DirectoryConfig,
-    UserProfile,
-};
+use crate::db::profile::{DirectoryConfig, UserProfile};
 
 use uuid::Uuid;
 

@@ -1,10 +1,7 @@
 use crate::backup::util;
 use crate::db::state::FileState;
 
-use filetime::{
-    FileTime,
-    set_file_mtime,
-};
+use filetime::{FileTime, set_file_mtime};
 use serde::{Serialize, Deserialize};
 use std::fs;
 use std::path::Path;

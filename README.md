@@ -20,6 +20,8 @@ cargo run -r
 
 ```
 cargo test
+
+cargo test -- --nocapture
 ```
 
 ### Cleanup State
