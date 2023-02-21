@@ -8,7 +8,7 @@ use crate::db::state::{
 use std::collections::HashSet;
 
 /**
- * StateManager assumes that a connection to the backup exists
+ * SystemStateManager assumes that a connection to the backup exists
  *
  * This means that if backup state returns an empty state for a file then it does not exist,
  * as opposed to, for example, not being able to connect AWS to pull the backup state.
