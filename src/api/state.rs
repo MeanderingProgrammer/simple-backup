@@ -4,7 +4,7 @@ use crate::db::state::{
     FileState,
     SystemState,
 };
-use crate::manager::state::SystemStateManager;
+use crate::manager::system::SystemStateManager;
 
 use glob::glob;
 
